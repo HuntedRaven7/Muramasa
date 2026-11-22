@@ -9,6 +9,9 @@ build-depends:
 - freedesktop-sdk.bst:components/make.bst
 - freedesktop-sdk.bst:components/grep.bst
 - freedesktop-sdk.bst:components/sed.bst
+- freedesktop-sdk.bst:components/m4.bst
+- freedesktop-sdk.bst:components/findutils.bst
+- freedesktop-sdk.bst:components/gzip.bst
 - security/checkpolicy.bst
 
 sources:

@@ -12,6 +12,16 @@ build-depends:
 - freedesktop-sdk.bst:components/wayland.bst
 - tooling/gtk4.bst
 - tooling/libadwaita.bst
+- freedesktop-sdk.bst:components/gdk-pixbuf.bst
+- freedesktop-sdk.bst:components/libxml2.bst
+- freedesktop-sdk.bst:components/icu.bst
+- tooling/glycin.bst
+- tooling/gnome-autoar.bst
+- tooling/gnome-desktop.bst
+- tooling/libgxdp.bst
+- tooling/libportal.bst
+- tooling/tinysparql.bst
+- tooling/blueprint-compiler.bst
 
 sources:
 - kind: git_repo

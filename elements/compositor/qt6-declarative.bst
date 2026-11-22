@@ -3,6 +3,10 @@ description: Qt 6 declarative/QML runtime, required by Quickshell.
 
 build-depends:
 - core/sandbox-tools.bst
+- freedesktop-sdk.bst:components/perl.bst
+- freedesktop-sdk.bst:components/python3.bst
+- freedesktop-sdk.bst:components/ninja.bst
+- freedesktop-sdk.bst:components/pkg-config.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 - freedesktop-sdk.bst:components/cmake.bst
 - freedesktop-sdk.bst:components/gcc.bst

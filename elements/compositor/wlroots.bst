@@ -13,6 +13,7 @@ build-depends:
 - freedesktop-sdk.bst:components/libinput.bst
 - freedesktop-sdk.bst:components/libxkbcommon.bst
 - freedesktop-sdk.bst:components/pixman.bst
+- freedesktop-sdk.bst:components/libdisplay-info.bst
 
 sources:
 - kind: git_repo

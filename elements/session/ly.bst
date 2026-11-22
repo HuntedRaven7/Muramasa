@@ -10,6 +10,7 @@ build-depends:
 - freedesktop-sdk.bst:components/linux-pam.bst
 - freedesktop-sdk.bst:bootstrap/ncurses.bst
 - freedesktop-sdk.bst:components/util-linux.bst
+- freedesktop-sdk.bst:components/xorg-lib-xcb.bst
 
 sources:
 - kind: git_repo
@@ -23,6 +24,10 @@ config:
   install-commands:
   - |
     set -eu
+    # Vendor zig-clap: the build sandbox has no network.
+    cp build.zig.zon.muramasa build.zig.zon
+    mkdir -p clap
+    cp -a /clap/. clap/
     zig build -Doptimize=ReleaseSafe --prefix "%{install-root}%{prefix}" install
 
     # Service and PAM profiles shipped by Ly.

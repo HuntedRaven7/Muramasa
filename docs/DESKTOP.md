@@ -71,3 +71,8 @@ in `elements/compositor/`. QtWayland is included because Quickshell enables
 Wayland by default and, on Qt 6.9+, requires the explicit `WaylandClientPrivate`
 component; `QuickPrivate` comes from qtdeclarative. Mango's X11, GL and Pango
 pkg-config providers are declared explicitly in its build dependencies.
+Qt builds declare Perl, Python, Ninja and pkg-config so CMake can generate all
+modules, and Ly vendors its pinned `zig-clap` dependency because the build
+sandbox has no network. Nautilus carries a source-built dependency closure for
+the GNOME libraries FSDK does not ship (glycin, gnome-autoar, gnome-desktop,
+libgxdp, libportal, tinysparql and blueprint-compiler).

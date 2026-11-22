@@ -12,6 +12,9 @@ build-depends:
 - freedesktop-sdk.bst:components/wayland-protocols.bst
 - freedesktop-sdk.bst:components/pipewire.bst
 - freedesktop-sdk.bst:components/glib.bst
+- freedesktop-sdk.bst:components/inih.bst
+- freedesktop-sdk.bst:components/dbus.bst
+- freedesktop-sdk.bst:components/systemd.bst
 
 sources:
 - kind: git_repo

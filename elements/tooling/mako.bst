@@ -3,6 +3,12 @@ description: mako, built from source because FSDK 26.08 does not ship it.
 
 build-depends:
 - core/sandbox-tools.bst
+- freedesktop-sdk.bst:components/wayland-protocols.bst
+- freedesktop-sdk.bst:components/dbus.bst
+- freedesktop-sdk.bst:components/systemd.bst
+- freedesktop-sdk.bst:components/cairo.bst
+- freedesktop-sdk.bst:components/pango.bst
+- freedesktop-sdk.bst:components/pkg-config.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 - freedesktop-sdk.bst:components/meson.bst
 - freedesktop-sdk.bst:components/wayland.bst
