@@ -8,10 +8,10 @@ sources:
   filename: zig.tar.xz
   (?):
   - arch == "x86_64":
-      url: 'ziglang:zig-%{zig-version}/zig-x86_64-linux-%{zig-version}.tar.xz'
+      url: 'ziglang:%{zig-version}/zig-x86_64-linux-%{zig-version}.tar.xz'
       ref: '%{zig-amd64-sha256}'
   - arch == "aarch64":
-      url: 'ziglang:zig-%{zig-version}/zig-aarch64-linux-%{zig-version}.tar.xz'
+      url: 'ziglang:%{zig-version}/zig-aarch64-linux-%{zig-version}.tar.xz'
       ref: '%{zig-arm64-sha256}'
 
 build-depends:
