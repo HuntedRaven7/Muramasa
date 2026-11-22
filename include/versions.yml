@@ -30,6 +30,13 @@ variables:
   ogc-kernel-ref: "v7.3.3-ogc1-0-ga66e9e735fa99a7844fe18b0af0651737589f61a"
   gamescope-ref: "3738994fd253a1c775821625a2c20beb4f879f16"
 
+  # --- Native Steam --------------------------------------------------------
+  # Valve's versioned launcher .deb in the apt pool (not the churning CDN URL).
+  steam-launcher-version: "1.0.0.87"
+  steam-launcher-deb-sha256: "765aba9a0ed339a50226ceb614fcc9879a991ba184098bc8de920efb12c714a4"
+  # Debian's 32-bit GTK2 runtime, dlopened by Steam's ubuntu12_32 UI.
+  gtk2-i386-deb-sha256: "59b4a428b6f5b76a7e1038a209fc4d8aee7ddf58dfbcf2159cd524f99fabd9c2"
+
   # --- Voice input ----------------------------------------------------------
   # Release v1.3.1, signed SHA256SUMS.txt. Checksum taken from the upstream
   # signed manifest; the matching .asc is verified by `just verify-voxtype`.

@@ -25,6 +25,7 @@ REQUIRED_BINARIES = [
     "kitty",
     "nautilus",
     "voxtype",
+    "steam",
     "firewall-cmd",
     "ujust",
     "just",
@@ -78,6 +79,11 @@ def main() -> int:
         if result.returncode != 0:
             print("FAIL: os-release does not identify Muramasa", file=sys.stderr)
             errors += 1
+
+    result = run("test -x /usr/lib/steam/steam.sh")
+    if result.returncode != 0:
+        print("FAIL: native Steam launcher payload missing", file=sys.stderr)
+        errors += 1
 
     result = run("test -f /boot/EFI/Linux/muramasa.efi")
     if result.returncode != 0:

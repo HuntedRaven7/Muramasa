@@ -16,5 +16,7 @@ aliases:
   crates: https://static.crates.io/
   flathub: https://flathub.org/repo/
   steam_static: https://cdn.fastly.steamstatic.com/
+  # Versioned apt pool path is stable; the CDN's unversioned steam.deb is not.
+  steam-repo: https://repo.steampowered.com/
   debian: https://deb.debian.org/debian/
   openssh: https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/

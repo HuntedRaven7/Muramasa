@@ -11,7 +11,8 @@ Stable is a **digest promotion**, never a rebuild. Development happens on
 | `testing` | `:testing`, `:testing-nvidia` | Daily builds |
 | `stable` | `:stable`, `:stable-nvidia` | Promoted releases |
 
-There is no `next` branch. `main` is a historical pointer.
+There is no `next` branch. `testing` is the primary/default branch;
+`stable` is the promotion branch — a released digest is never rebuilt.
 
 ## Procedure
 

@@ -1,7 +1,7 @@
 # Contributing
 
-Muramasa uses two branches: `testing` for all development and `stable` for
-promoted releases. `main` is a historical pointer.
+Muramasa uses two branches: `testing` is the primary/default branch for all
+development, and `stable` is the promotion branch for released digests.
 
 ## Before opening a PR
 

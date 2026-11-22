@@ -14,7 +14,7 @@ shell configuration files to this repository**.
 - Both GPU flavors are built from this one tree: `nvidia=false` (default) and
   `nvidia=true`. Never fork the element graph for a flavor.
 - `testing` is the development branch. `stable` is a digest promotion, never a
-  rebuild. `main` is a historical pointer.
+  rebuild. `testing` is the primary/default branch; `stable` is the promotion branch.
 
 ## Layout
 

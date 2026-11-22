@@ -5,8 +5,8 @@
 | Stream | Supported |
 | --- | --- |
 | `stable` / `stable-nvidia` | Yes |
-| `testing` / `testing-nvidia` | Best effort |
-| `main` branch | No |
+| `testing` / `testing-nvidia` | Best effort (primary development branch) |
+| Any other branch | No |
 
 ## Reporting a vulnerability
 

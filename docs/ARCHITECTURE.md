@@ -15,7 +15,7 @@ freedesktop-sdk.bst (junction, x86-64-v3)
 ├── compositor/mango.bst    Mango, pinned source build
 ├── compositor/quickshell.bst  Quickshell v0.3.2 source build (binary only)
 ├── tooling/                WC tooling, brew, Docker, Voxtype, agent defaults
-├── gaming/                 gamescope + Steam launcher
+├── gaming/                 gamescope + native Steam + i686 compat stack
 └── oci/rootfs.bst -> oci/muramasa.bst (bootc OCI layout)
 ```
 

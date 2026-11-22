@@ -38,6 +38,12 @@ start it from your Mango config if desired.
 
 ## Gaming
 
-The OGC kernel is shared by both flavors. gamescope and a Steam launcher are
-installed; Steam itself is installed on demand with `ujust install-steam`. The
-`Steam (Gamescope)` desktop entry runs Steam inside a nested gamescope session.
+The OGC kernel is shared by both flavors. gamescope and native Steam are
+installed in the image: `/usr/bin/steam` comes from Valve's pinned launcher
+`.deb`, backed by the full 32-bit i686 compatibility slice ported from Dakota
+(X11, GLVND/Mesa, Vulkan ICDs, GLib, GTK2). The Steam client self-updates into
+the user's home directory on first launch. The `Steam (Gamescope)` desktop
+entry runs Steam inside a nested gamescope session.
+
+Native Steam is x86_64 only; aarch64 builds omit it because Valve does not
+publish a native launcher for that architecture.

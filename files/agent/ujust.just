@@ -28,13 +28,13 @@ brew-list:
 start-mango:
     @exec /usr/bin/mango
 
-# Install Steam from Flathub (Steam is intentionally not baked into the image).
-install-steam:
+# Verify the native Steam launcher installed in the image.
+verify-steam:
     @#!/usr/bin/env bash
     set -euo pipefail
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    flatpak install -y flathub com.valvesoftware.Steam
-    @echo "Use 'steam' from the application menu, or 'flatpak run com.valvesoftware.Steam'."
+    test -x /usr/bin/steam
+    test -x /usr/lib/steam/steam.sh
+    @echo "Native Steam launcher is installed. The client self-updates on first launch."
 
 # Download the configured Voxtype model (models are not shipped in the image).
 setup-voxtype:
