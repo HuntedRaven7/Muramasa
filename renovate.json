@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":conventionalCommits",
+    ":semanticCommits"
+  ],
+  "baseBranches": ["testing"],
+  "labels": ["dependencies", "renovate"],
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "automerge": true
+    },
+    {
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit",
+      "automerge": true
+    },
+    {
+      "description": "BuildStream pins are updated by auto-pins.yml, not Renovate",
+      "matchFileNames": ["include/versions.yml"],
+      "enabled": false
+    }
+  ]
+}

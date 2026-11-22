@@ -1,0 +1,2 @@
+# Options explicitly disabled for this image.
+CONFIG_DEBUG_INFO=y

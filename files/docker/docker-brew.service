@@ -1,0 +1,14 @@
+[Unit]
+Description=Docker Engine (Homebrew)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/home/linuxbrew/.linuxbrew/bin/dockerd --host=unix:///var/run/docker.sock
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

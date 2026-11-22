@@ -1,0 +1,11 @@
+.build-out/
+build/
+sbom_out/
+*.raw
+*.iso
+*.tar
+*.tar.zst
+image-diff.md
+__pycache__/
+*.py[cod]
+.venv/

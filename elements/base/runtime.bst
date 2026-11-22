@@ -1,0 +1,30 @@
+kind: stack
+description: |
+  Minimal bootc runtime. Deliberately no desktop session here: Mango is added
+  by the compositor layer so non-graphical consumers can reuse this base.
+
+depends:
+- freedesktop-sdk.bst:public-stacks/runtime-minimal.bst
+- freedesktop-sdk.bst:components/systemd.bst
+- freedesktop-sdk.bst:components/dbus.bst
+- freedesktop-sdk.bst:components/bash.bst
+- freedesktop-sdk.bst:components/coreutils.bst
+- freedesktop-sdk.bst:components/util-linux.bst
+- freedesktop-sdk.bst:components/ca-certificates.bst
+- freedesktop-sdk.bst:components/tzdata.bst
+- freedesktop-sdk.bst:components/openssl.bst
+- freedesktop-sdk.bst:components/curl.bst
+- freedesktop-sdk.bst:components/git.bst
+- freedesktop-sdk.bst:components/jq.bst
+- freedesktop-sdk.bst:components/fzf.bst
+- freedesktop-sdk.bst:components/ripgrep.bst
+- freedesktop-sdk.bst:components/tmux.bst
+- freedesktop-sdk.bst:components/less.bst
+- freedesktop-sdk.bst:components/sudo.bst
+- freedesktop-sdk.bst:components/shadow.bst
+- freedesktop-sdk.bst:components/linux-pam.bst
+- freedesktop-sdk.bst:components/polkit.bst
+- freedesktop-sdk.bst:components/NetworkManager.bst
+- freedesktop-sdk.bst:components/openssh.bst
+- freedesktop-sdk.bst:components/firewalld.bst
+- files/runtime.bst

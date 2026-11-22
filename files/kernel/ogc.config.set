@@ -1,0 +1,8 @@
+# Gaming-critical options. Kept minimal on purpose: add only options whose
+# absence must fail the build.
+CONFIG_SCHED_CLASS_EXT=y
+CONFIG_NTSYNC=y
+CONFIG_CRYPTO_ZSTD=y
+CONFIG_BPF=y
+CONFIG_BPF_SYSCALL=y
+CONFIG_DEBUG_INFO_BTF=y

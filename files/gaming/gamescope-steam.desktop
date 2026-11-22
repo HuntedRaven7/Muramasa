@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Steam (Gamescope)
+Comment=Launch Steam in a nested gamescope session
+Exec=gamescope -- /usr/bin/steam
+Type=Application
+Categories=Game;
+StartupNotify=false

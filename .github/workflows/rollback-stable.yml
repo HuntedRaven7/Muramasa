@@ -1,0 +1,37 @@
+name: rollback-stable
+
+on:
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: 'Known-good digest to restore on :stable'
+        type: string
+        required: true
+
+permissions: {}
+
+concurrency:
+  group: release-stable
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Normalize owner
+        run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: ${{ github.repository_owner }}
+      - name: Restore previous digest
+        env:
+          DIGEST: ${{ inputs.digest }}
+        run: |
+          set -euo pipefail
+          case "$DIGEST" in sha256:*) ;; *) echo "digest must start with sha256:" >&2; exit 2 ;; esac
+          for suffix in "" "-nvidia"; do
+            dst="docker://ghcr.io/${IMAGE_OWNER}/muramasa:stable${suffix}"
+            skopeo copy --all "docker://ghcr.io/${IMAGE_OWNER}/muramasa@${DIGEST}" "$dst"
+          done

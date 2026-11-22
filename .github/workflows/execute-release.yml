@@ -1,0 +1,100 @@
+name: execute-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preflight only (no promotion)'
+        type: boolean
+        default: true
+      promote_sha:
+        description: 'Optional 40-char commit SHA to promote (recovery)'
+        type: string
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: release-stable
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.candidate.outputs.digest }}
+      current: ${{ steps.current.outputs.digest }}
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: testing
+      - name: Normalize owner
+        run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: ${{ github.repository_owner }}
+      - uses: oras-project/setup-oras@v1
+      - name: Current stable digest
+        id: current
+        run: |
+          set -euo pipefail
+          digest=$(oras manifest fetch "ghcr.io/${IMAGE_OWNER}/muramasa:stable" \
+            --descriptor 2>/dev/null | jq -r '.digest // empty' || true)
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "current :stable = ${digest:-<none>}"
+      - name: Candidate digest
+        id: candidate
+        run: |
+          set -euo pipefail
+          sha="${{ inputs.promote_sha }}"
+          if [ -n "$sha" ]; then
+            echo "candidate sha = ${sha}"
+            echo "Resolve the build workflow run for ${sha} before applying." >&2
+          fi
+          digest=$(oras manifest fetch "ghcr.io/${IMAGE_OWNER}/muramasa:testing" \
+            --descriptor | jq -r '.digest')
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "candidate :testing = ${digest}"
+
+  promote:
+    needs: preflight
+    if: ${{ inputs.dry_run == false }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: testing
+          fetch-depth: 0
+      - name: Normalize owner
+        run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: ${{ github.repository_owner }}
+      - uses: oras-project/setup-oras@v1
+      - name: Promote both flavors
+        env:
+          DIGEST: ${{ needs.preflight.outputs.digest }}
+        run: |
+          set -euo pipefail
+          test -n "$DIGEST"
+          for suffix in "" "-nvidia"; do
+            src="docker://ghcr.io/${IMAGE_OWNER}/muramasa:testing${suffix}"
+            dst="docker://ghcr.io/${IMAGE_OWNER}/muramasa:stable${suffix}"
+            # Re-tag the exact candidate manifest; never rebuild.
+            skopeo copy --all "$src" "$dst"
+          done
+      - name: Generate release notes
+        uses: projectbluefin/actions/bootc-build/generate-release-notes@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        with:
+          config: cliff.toml
+      - name: Create release
+        uses: projectbluefin/actions/bootc-build/create-release@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        with:
+          image: ghcr.io/${{ env.IMAGE_OWNER }}/muramasa
+          digest: ${{ needs.preflight.outputs.digest }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

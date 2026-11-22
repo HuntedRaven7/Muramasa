@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Mango
+Comment=Muramasa Wayland session powered by Mango
+Exec=/usr/bin/mango
+Type=Application
+DesktopNames=Mango

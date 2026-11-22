@@ -1,0 +1,7 @@
+NAME="Muramasa"
+PRETTY_NAME="Muramasa (FSDK)"
+ID=muramasa
+ID_LIKE="fdk"
+VERSION_ID="1"
+HOME_URL="https://github.com/HuntedRaven7/Muramasa"
+BUG_REPORT_URL="https://github.com/HuntedRaven7/Muramasa/issues"

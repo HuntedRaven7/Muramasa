@@ -1,0 +1,4 @@
+#!/bin/sh
+# Thin wrapper so `ujust <recipe>` works without a user-level justfile.
+set -eu
+exec just --justfile /usr/share/ujust/ujust.just --working-directory /var/tmp "$@"

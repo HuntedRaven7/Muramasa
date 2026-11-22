@@ -1,0 +1,55 @@
+# Architecture
+
+Muramasa is a BuildStream 2 project that exports a bootc OCI image. It follows
+the Mjolnir pattern: build everything from a pinned freedesktop-sdk junction,
+then compose the final rootfs with `build-oci` and rechunk it in CI.
+
+## Build graph
+
+```
+freedesktop-sdk.bst (junction, x86-64-v3)
+├── base/runtime.bst        systemd, dbus, CLI tools, firewalld
+├── base/kernel-ogc.bst     OGC kernel + local config fragments
+├── base/boot.bst           initramfs + systemd-boot + UKI
+├── base/nvidia.bst         NVIDIA flavor only (-o nvidia true)
+├── compositor/mango.bst    Mango, pinned source build
+├── compositor/quickshell.bst  Quickshell v0.3.2 source build (binary only)
+├── tooling/                WC tooling, brew, Docker, Voxtype, agent defaults
+├── gaming/                 gamescope + Steam launcher
+└── oci/rootfs.bst -> oci/muramasa.bst (bootc OCI layout)
+```
+
+`compositor/session.bst` is the dependency closure; CI builds
+`oci/muramasa.bst` directly and BuildStream pulls everything else.
+
+## GPU flavors
+
+Flavors are BuildStream options, not separate branches:
+
+| Flavor | Option | Tags |
+| --- | --- | --- |
+| Default | `-o nvidia false` | `:testing`, `:stable` |
+| NVIDIA | `-o nvidia true` | `:testing-nvidia`, `:stable-nvidia` |
+
+Both share the OGC kernel. `base/nvidia.bst` adds the driver modules and
+userspace libraries only when the option is enabled. The CI build matrix builds
+both flavors from the same commit.
+
+## Boot model
+
+- systemd-boot with a Unified Kernel Image at `/boot/EFI/Linux/muramasa.efi`
+- The kernel command line is embedded in the UKI
+- `containers.bootc=1` label on the OCI image
+- `bootc container lint` gates every build
+
+## Why no GNOME junction
+
+The GNOME and Bluefin artifact caches are reused as **pull-only** caches in
+`project.conf`. They are built on FSDK, so their FSDK artifacts satisfy our
+junction without imposing GNOME Shell or GNOME OS on the image.
+
+## What is deliberately absent
+
+- No Quickshell configuration, QML or autostart unit. Image owner supplies it.
+- No wallpaper manager. The shell layer owns wallpapers.
+- No preinstalled coding agent CLI. We ship guidance and automation only.

@@ -1,0 +1,38 @@
+name: auto-pins
+
+on:
+  schedule:
+    - cron: '23 5 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  track:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: testing
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: Re-track sources
+        run: |
+          set -euo pipefail
+          podman run --rm --privileged --device /dev/fuse --network=host \
+            -v "$PWD:/src:rw" -w /src \
+            registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:64eb0b4930d57a92710822898fb73af6cc1ae35d \
+            bash -lc 'for e in elements/freedesktop-sdk.bst elements/plugins/*.bst elements/compositor/*.bst elements/gaming/gamescope.bst elements/tooling/brew.bst; do bst -o arch x86_64 source track "$e"; done'
+      - name: Open PR if pins changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: testing
+          branch: chore/auto-pins
+          commit-message: 'chore: re-track source pins'
+          title: 'chore: re-track source pins'
+          body: 'Automated pin refresh. Review the `include/versions.yml` diff before merging.'

@@ -1,0 +1,176 @@
+name: build
+
+on:
+  push:
+    branches: [testing]
+  pull_request:
+    branches: [testing]
+  merge_group:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: Pin and metadata checks
+        run: python3 scripts/check-pins.py
+      - name: Python syntax
+        run: python3 -m compileall -q scripts tests
+      - name: BuildStream graph
+        run: |
+          podman run --rm --privileged --device /dev/fuse --network=host \
+            -v "$PWD:/src:rw" -w /src \
+            registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:64eb0b4930d57a92710822898fb73af6cc1ae35d \
+            bst --no-interactive show oci/muramasa.bst
+
+  image:
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      PODMAN: "sudo podman"
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor:
+          - name: base
+            nvidia: false
+            suffix: ""
+          - name: nvidia
+            nvidia: true
+            suffix: "-nvidia"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Normalize registry owner
+        run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: ${{ github.repository_owner }}
+
+      - name: Flavor outputs
+        id: flavor
+        run: |
+          echo "nvidia=${{ matrix.flavor.nvidia }}" >> "$GITHUB_OUTPUT"
+          echo "suffix=${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
+          echo "tag=testing${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
+
+      - uses: projectbluefin/actions/bootc-build/setup-runner@v1
+        with:
+          storage-backend: btrfs
+          native-overlay: "true"
+          install-tools: '["just", "cosign", "oras"]'
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: Cache key
+        run: |
+          echo "BST_CACHE_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-${{ hashFiles('project.conf', 'include/versions.yml', 'elements/freedesktop-sdk.bst') }}" >> "$GITHUB_ENV"
+          echo "BST_CACHE_REF=ghcr.io/${{ env.IMAGE_OWNER }}/muramasa-cache" >> "$GITHUB_ENV"
+
+      - name: Restore BuildStream cache
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: just cache-pull
+
+      - name: Build and export image
+        id: build-image
+        run: |
+          if [ "${{ matrix.flavor.nvidia }}" = "true" ]; then
+            just bst -o nvidia true build oci/muramasa.bst
+            just bst -o nvidia true artifact checkout oci/muramasa.bst --directory /src/.build-out
+          else
+            just bst build oci/muramasa.bst
+            just bst artifact checkout oci/muramasa.bst --directory /src/.build-out
+          fi
+          IMAGE_ID=$(sudo podman pull -q oci:.build-out)
+          sudo podman tag "$IMAGE_ID" "localhost/muramasa:latest"
+
+      - name: Image content checks
+        run: |
+          sudo podman run --rm --privileged "localhost/muramasa:latest" bootc container lint
+          python3 tests/test_image_contents.py "localhost/muramasa:latest"
+
+      - name: Export for scanning
+        run: sudo podman save --format docker-archive -o /tmp/scan-image.tar localhost/muramasa:latest
+
+      - name: Scan image
+        uses: projectbluefin/actions/bootc-build/scan-image@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        continue-on-error: true
+        with:
+          input: /tmp/scan-image.tar
+          severity-threshold: CRITICAL
+          exit-code: '0'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rechunk with chunkah
+        uses: projectbluefin/actions/bootc-build/chunka@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        with:
+          source-image: localhost/muramasa:latest
+          max-layers: "128"
+          source-date-epoch: auto
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        id: push
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
+            -u "${{ github.actor }}" --password-stdin
+          IMAGE="ghcr.io/${{ env.IMAGE_OWNER }}/muramasa"
+          IMAGE_ID=$(sudo podman image inspect --format '{{.Id}}' localhost/muramasa:latest)
+          sudo podman push --digestfile /tmp/muramasa-digest.txt \
+            "containers-storage:${IMAGE_ID}" "docker://${IMAGE}:${{ steps.flavor.outputs.tag }}"
+          DIGEST=$(cat /tmp/muramasa-digest.txt)
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Pushed ${IMAGE}:${{ steps.flavor.outputs.tag }}@${DIGEST}"
+
+      - name: Sign and attest
+        if: github.event_name != 'pull_request'
+        uses: projectbluefin/actions/bootc-build/sign-and-publish@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        with:
+          image: ghcr.io/${{ env.IMAGE_OWNER }}/muramasa
+          digest: ${{ steps.push.outputs.digest }}
+          signing-mode: keyless
+          generate-sbom: 'false'
+          push-attestation: 'true'
+          certificate-identity-regexp: '^https://github\.com/${{ github.repository_owner }}/Muramasa/\.github/workflows/build\.yml@refs/heads/(testing|gh-readonly-queue/testing/.+)$'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: muramasa
+
+      - name: Prune old images
+        if: github.event_name != 'pull_request'
+        uses: projectbluefin/actions/bootc-build/ghcr-cleanup@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
+        with:
+          packages: muramasa
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save BuildStream cache
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          if [ "${{ steps.build-image.outcome }}" != "success" ]; then
+            unset BST_CACHE_KEY
+          fi
+          just cache-push

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launch the Flathub Steam build. Install it first with `ujust install-steam`.
+set -eu
+exec flatpak run com.valvesoftware.Steam "$@"

@@ -1,0 +1,20 @@
+# Source aliases. Changing an alias does not invalidate an artifact, so mirror
+# moves do not trigger rebuilds. Keep names aligned with FSDK/Dakota where
+# possible so elements can be copied between projects.
+aliases:
+  github: https://github.com/
+  github_files: https://github.com/
+  github_releases: https://github.com/
+  github_raw: https://raw.githubusercontent.com/
+  gitlab: https://gitlab.com/
+  freedesktop: https://gitlab.freedesktop.org/
+  gnome: https://gitlab.gnome.org/GNOME/
+  codeberg: https://codeberg.org/
+  kernel: https://git.kernel.org/pub/scm/
+  pypi: https://files.pythonhosted.org/packages/
+  ghcr: https://ghcr.io/
+  crates: https://static.crates.io/
+  flathub: https://flathub.org/repo/
+  steam_static: https://cdn.fastly.steamstatic.com/
+  debian: https://deb.debian.org/debian/
+  openssh: https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/

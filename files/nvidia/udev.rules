@@ -1,0 +1,3 @@
+# Make the NVIDIA device nodes available to seated users for GPU acceleration.
+SUBSYSTEM=="nvidia", TAG+="uaccess"
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", TAG+="uaccess"

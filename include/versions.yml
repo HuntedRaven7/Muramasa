@@ -1,0 +1,44 @@
+# Single source of truth for third-party pins.
+#
+# Everything that is downloaded is pinned here; elements reference these via
+# %{variable}. `just track` (and .github/workflows/auto-pins.yml) updates the
+# mutable values and opens a PR. A build with an unset pin fails
+# `tests/test_pins.py` before any source is fetched.
+variables:
+  # --- Toolchain ------------------------------------------------------------
+  fsdk-ref: "freedesktop-sdk-26.08.4-0-g114ae909ec9881958bd507c8b4414aa33f758d2b"
+  bst-sbom-ref: "0706fec3bedf6f73bd9d2fed32c2aed585feef8d"
+  buildstream-plugins-ref: "2.5.0-0-g79649529cffb695d0d22195ed9a4910c80ca6907"
+  buildstream-plugins-community-ref: "85c2bae9d3a1eb3121c9674f68ef6e87211fddb9c930f3e5057b9a1e66eb41d9"
+
+  # --- Compositor and shell -------------------------------------------------
+  # Mango: pinned to the reviewed main-branch commit (2026-11-21).
+  mango-ref: "578a2efccea00d6909d5751d0d4058e86fc11598"
+  # Quickshell v0.3.2: annotated tag object -> dereferenced commit.
+  quickshell-version: "v0.3.2"
+  quickshell-tag-ref: "8e2bb761d3e994fc04359c55dec269b747654b6a"
+  quickshell-ref: "4f508be500dea6e5732cc3d50382a0048b17e7b1"
+
+  # --- Desktop tooling ------------------------------------------------------
+  # Most WC tools come from FSDK (pinned by fsdk-ref above). Only applications
+  # that FSDK does not carry are pinned here.
+  kitty-ref: "6946bd317e41dd7c43517425f74f09da6aa86350"
+  nautilus-ref: "cdce9fcaacfc4240bd0f9b302bef6f48046aec13"
+
+  # --- Gaming ---------------------------------------------------------------
+  ogc-localversion: "-ogc1"
+  ogc-kernel-ref: "v7.3.3-ogc1-0-ga66e9e735fa99a7844fe18b0af0651737589f61a"
+  gamescope-ref: "3738994fd253a1c775821625a2c20beb4f879f16"
+
+  # --- Voice input ----------------------------------------------------------
+  # Release v1.3.1, signed SHA256SUMS.txt. Checksum taken from the upstream
+  # signed manifest; the matching .asc is verified by `just verify-voxtype`.
+  voxtype-version: "1.3.1"
+  voxtype-sums-sha256: "55b36165f52dc27d575361bf219f0567efa369da1ffa66b27464c290b5232017"
+  voxtype-amd64-sha256: "4bcb7aa6d137d40c7fb209a8eaa876c50aa05b92e10aced5983b0839fb2ca344"
+  voxtype-arm64-sha256: "43f54ff446d3ab8b785ec61008d97bf712ed9ff5352225af91e5c4e143c64f14"
+
+  # --- Homebrew / Docker ----------------------------------------------------
+  brew-ref: "550a03e3d5f600282c8b4c73060bb830c91c1f74"
+  brew-tarball-amd64-sha256: "130848582eed433e85af6fa8c829ddec12ddaa6b18bc037a610b4b8da3c97458"
+  brew-tarball-arm64-sha256: "aff477fa0ccbbb467946ed12e1ec6cd7726281e555daa152ef64af8f3106a5e6"

@@ -1,0 +1,6 @@
+[Default Applications]
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+text/plain=kitty.desktop
+inode/directory=org.gnome.Nautilus.desktop
+image/png=org.gnome.Nautilus.desktop

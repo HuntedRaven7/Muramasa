@@ -1,0 +1,16 @@
+# Flavor definitions shared by the build graph, Justfile and CI matrix.
+# Keeping them here avoids duplicating tag suffixes in four places.
+variables:
+  stream-testing: "testing"
+  stream-stable: "stable"
+  flavor-base: ""
+  flavor-nvidia: "-nvidia"
+  cache-image: "muramasa-cache"
+  final-image: "muramasa"
+
+  # Human-readable tag suffix used by generate-tags / release notes.
+  (?):
+    - nvidia == true:
+        flavor-suffix: "-nvidia"
+    - nvidia == false:
+        flavor-suffix: ""
