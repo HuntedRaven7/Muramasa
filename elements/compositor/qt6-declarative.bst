@@ -11,7 +11,7 @@ build-depends:
 sources:
 - kind: git_repo
   url: github:qt/qtdeclarative.git
-  track: dev
+  track: 'v%{qt6-version}'
   ref: '%{qt6-declarative-ref}'
 
 config:

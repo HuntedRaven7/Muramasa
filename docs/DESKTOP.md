@@ -66,5 +66,8 @@ left to the user or a future image-level default.
 GTK4 and libadwaita are also built from pinned sources for Nautilus.
 Because FSDK 26.08 carries neither a compositor stack nor Qt6, Mango's
 dependencies (`wlroots` 0.20, `scenefx` 0.5, cJSON) and Quickshell's Qt6 modules
-(qtbase, qtdeclarative, qtsvg) are built from pinned upstream sources in
-`elements/compositor/`.
+(qtbase, qtdeclarative, qtsvg and qtwayland) are built from pinned release tags
+in `elements/compositor/`. QtWayland is included because Quickshell enables
+Wayland by default and, on Qt 6.9+, requires the explicit `WaylandClientPrivate`
+component; `QuickPrivate` comes from qtdeclarative. Mango's X11, GL and Pango
+pkg-config providers are declared explicitly in its build dependencies.

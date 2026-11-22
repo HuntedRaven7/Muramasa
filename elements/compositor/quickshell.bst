@@ -15,6 +15,7 @@ build-depends:
 - compositor/qt6-base.bst
 - compositor/qt6-declarative.bst
 - compositor/qt6-svg.bst
+- compositor/qt6-wayland.bst
 
 sources:
 - kind: git_repo

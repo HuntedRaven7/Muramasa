@@ -41,9 +41,11 @@ variables:
   cjson-ref: "6d9f2443ab071f86e5d9b43025a40929ec41c46c"
   wlroots-ref: "d783533489e1f75d6886c2ab5c5960090ef268f8"
   scenefx-ref: "37ccd723bef49e6891156ffafce8f549f01446cc"
-  qt6-base-ref: "537ef48d015643b3293b69cddf7e7bc6492f164d"
-  qt6-declarative-ref: "18af07537799beea354406668ea7766ffe18ef84"
-  qt6-svg-ref: "58eeec648c7f9f55247436c77edb1d11c75657ed"
+  qt6-version: "6.11.3"
+  qt6-base-ref: "138f955f0b5e50e4a6c2ee1e78a2279db52ae9e3"
+  qt6-declarative-ref: "95e4ceccb77c82411f8a048eda4360e5967f4e60"
+  qt6-svg-ref: "f5d99721911e4a1989965a087813cf1277519bc6"
+  qt6-wayland-ref: "b4295e92018e1ad042c3715b8743c2ef8f643d79"
 
   # --- Display manager -----------------------------------------------------
   ly-ref: "747955ce3b654039c2aab9c2dbc089c26b07953c"

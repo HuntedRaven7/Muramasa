@@ -11,7 +11,7 @@ build-depends:
 sources:
 - kind: git_repo
   url: github:qt/qtsvg.git
-  track: dev
+  track: 'v%{qt6-version}'
   ref: '%{qt6-svg-ref}'
 
 config:

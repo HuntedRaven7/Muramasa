@@ -24,7 +24,7 @@ build-depends:
 sources:
 - kind: git_repo
   url: github:qt/qtbase.git
-  track: dev
+  track: 'v%{qt6-version}'
   ref: '%{qt6-base-ref}'
 
 config:
