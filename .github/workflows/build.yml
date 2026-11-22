@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2
         with:
           tool: just
       - name: Pin and metadata checks
@@ -70,12 +70,12 @@ jobs:
           echo "suffix=${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
           echo "tag=testing${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
 
-      - uses: projectbluefin/actions/bootc-build/setup-runner@v1
+      - uses: projectbluefin/actions/bootc-build/setup-runner@9eccc77361d4e1bdc8c412dd3b6573d8680d2246 # v1
         with:
           storage-backend: btrfs
           native-overlay: "true"
           install-tools: '["just", "cosign", "oras"]'
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2
         with:
           tool: just
 

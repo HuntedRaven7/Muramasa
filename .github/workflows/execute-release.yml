@@ -35,7 +35,7 @@ jobs:
         run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
         env:
           OWNER: ${{ github.repository_owner }}
-      - uses: oras-project/setup-oras@v1
+      - uses: oras-project/setup-oras@22ce207df3b08e061f537244349aac6ae1d214f6 # v1
       - name: Current stable digest
         id: current
         run: |
@@ -75,7 +75,7 @@ jobs:
         run: echo "IMAGE_OWNER=${OWNER,,}" >> "$GITHUB_ENV"
         env:
           OWNER: ${{ github.repository_owner }}
-      - uses: oras-project/setup-oras@v1
+      - uses: oras-project/setup-oras@22ce207df3b08e061f537244349aac6ae1d214f6 # v1
       - name: Promote both flavors
         env:
           DIGEST: ${{ needs.preflight.outputs.digest }}
