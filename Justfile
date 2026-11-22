@@ -131,6 +131,10 @@ clean:
     rm -rf .build-out sbom_out
     {{podman}} rmi "{{image_name}}:{{image_tag}}" || true
 
+# Run Mango smoke checks against an exported image.
+e2e image="{{registry}}/muramasa:testing":
+    IMAGE="{{image}}" PODMAN="{{podman}}" ./testsuite/smoke.sh
+
 # Apply branch protection rules (needs ADMIN_TOKEN or GH_TOKEN with admin rights).
 protect:
     ./scripts/apply-branch-protection.sh

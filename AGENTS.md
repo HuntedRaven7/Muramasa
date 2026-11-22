@@ -30,6 +30,7 @@ shell configuration files to this repository**.
 | `include/` | Aliases, pins and flavor variables included by `project.conf` |
 | `scripts/` | Cache transport, pin checks, image diff helpers |
 | `tests/` | Content assertions run in CI |
+| `testsuite/` | Shared E2E wrapper and Mango-specific smoke checks |
 | `.agents/skills/` | Task-specific guidance for coding agents |
 | `.github/workflows/` | Build, quality, cache cleanup, release automation |
 | `.github/branch-protection/` | Branch protection API payloads for `testing` and `stable` |
