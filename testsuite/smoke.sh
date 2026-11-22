@@ -31,7 +31,11 @@ done
 
 check "Mango default config" 'test -f /etc/mango/mango.conf'
 check "Mango wayland session" 'test -f /usr/share/wayland-sessions/mango.desktop'
-check "tty1 autologin" 'test -f /usr/lib/systemd/system/getty@tty1.service.d/override.conf'
+check "Ly display manager service" 'test -f /usr/lib/systemd/system/ly@.service'
+check "Ly Tokyo Night config" 'test -f /etc/ly/config.lua && grep -q "0x001a1b26" /etc/ly/config.lua'
+check "Ly enabled on tty1" 'test -L /etc/systemd/system/multi-user.target.wants/ly@tty1.service'
+check "Secure Boot public cert" 'test -f /usr/share/muramasa/secure-boot/secure-boot.crt'
+check "wlroots portal" 'test -x /usr/libexec/xdg-desktop-portal-wlr || command -v xdg-desktop-portal-wlr >/dev/null 2>&1'
 check "UKI present" 'test -f /boot/EFI/Linux/muramasa.efi'
 check "OGC kernel version recorded" 'test -s /usr/share/muramasa/kernel-version'
 check "Steam launcher payload" 'test -x /usr/lib/steam/steam.sh'

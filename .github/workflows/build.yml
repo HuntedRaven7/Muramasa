@@ -84,6 +84,23 @@ jobs:
           echo "BST_CACHE_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-${{ hashFiles('project.conf', 'include/versions.yml', 'elements/freedesktop-sdk.bst') }}" >> "$GITHUB_ENV"
           echo "BST_CACHE_REF=ghcr.io/${{ env.IMAGE_OWNER }}/muramasa-cache" >> "$GITHUB_ENV"
 
+      - name: Stage Secure Boot keys (optional)
+        if: github.event_name != 'pull_request'
+        env:
+          SECURE_BOOT_KEY: ${{ secrets.SECURE_BOOT_KEY }}
+          SECURE_BOOT_CERT: ${{ secrets.SECURE_BOOT_CERT }}
+        run: |
+          set -euo pipefail
+          if [ -n "${SECURE_BOOT_KEY}" ] && [ -n "${SECURE_BOOT_CERT}" ]; then
+            mkdir -p files/boot-keys/private files/boot-keys/public
+            printf '%s\n' "${SECURE_BOOT_KEY}" > files/boot-keys/private/secure-boot.key
+            printf '%s\n' "${SECURE_BOOT_CERT}" > files/boot-keys/public/secure-boot.crt
+            chmod 600 files/boot-keys/private/secure-boot.key
+            echo "BUILD_SIGNING=true" >> "$GITHUB_ENV"
+          else
+            echo "No Secure Boot secrets configured; building unsigned UKI"
+          fi
+
       - name: Restore BuildStream cache
         continue-on-error: true
         env:
@@ -94,11 +111,15 @@ jobs:
       - name: Build and export image
         id: build-image
         run: |
+          SIGN_ARGS=""
+          if [ "${BUILD_SIGNING:-false}" = "true" ]; then
+            SIGN_ARGS="-o secure_boot_signing true"
+          fi
           if [ "${{ matrix.flavor.nvidia }}" = "true" ]; then
-            just bst -o nvidia true build oci/muramasa.bst
+            just bst $SIGN_ARGS -o nvidia true build oci/muramasa.bst
             just bst -o nvidia true artifact checkout oci/muramasa.bst --directory /src/.build-out
           else
-            just bst build oci/muramasa.bst
+            just bst $SIGN_ARGS build oci/muramasa.bst
             just bst artifact checkout oci/muramasa.bst --directory /src/.build-out
           fi
           IMAGE_ID=$(sudo podman pull -q oci:.build-out)

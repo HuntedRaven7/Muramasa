@@ -24,6 +24,8 @@ asserts:
 - firewalld, `ujust`, agent guidance
 - UKI boot asset and recorded OGC kernel version
 - no wallpaper manager and no shell configuration
+- Ly service, Tokyo Night config, tty1 enablement and the Secure Boot certificate
+- the wlroots portal backend
 
 The intent is also documented as behave scenarios in
 `testsuite/features/mango-smoke.feature`.

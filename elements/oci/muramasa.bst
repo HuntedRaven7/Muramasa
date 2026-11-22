@@ -8,6 +8,7 @@ build-depends:
 - core/sandbox-tools.bst
 - freedesktop-sdk.bst:components/oci-builder.bst
 - freedesktop-sdk.bst:components/libcap.bst
+- freedesktop-sdk.bst:components/sbsigntools-maybe.bst
 - filename: oci/rootfs.bst
   config:
     location: /rootfs
@@ -16,10 +17,24 @@ variables:
   strip-binaries: ''
   image-repo: '%{image-name}'
 
+sources:
+- kind: local
+  path: files/boot-keys
+  directory: keys
+
 config:
   commands:
   - |
     set -eu
+    # Sign the UKI when a key and option are available. The public cert is
+    # always shipped so users can enroll it with `ujust enroll-secure-boot-key`.
+    if [ -f /keys/private/secure-boot.key ]; then
+      sbsign --key /keys/private/secure-boot.key \
+        --cert /keys/public/secure-boot.crt \
+        --output /tmp/muramasa.efi.signed \
+        /rootfs/boot/EFI/Linux/muramasa.efi
+      cp /tmp/muramasa.efi.signed /rootfs/boot/EFI/Linux/muramasa.efi
+    fi
     cd "%{install-root}"
     build-oci <<'EOF'
     mode: oci

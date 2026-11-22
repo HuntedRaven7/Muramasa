@@ -16,4 +16,6 @@ depends:
 - agent/agent.bst
 - files/session.bst
 - files/os-release.bst
+- files/secure-boot.bst
+- session/ly.bst
 - base/nvidia.bst

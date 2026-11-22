@@ -28,6 +28,18 @@ brew-list:
 start-mango:
     @exec /usr/bin/mango
 
+# Enroll the Muramasa development Secure Boot key (requires MOK management).
+enroll-secure-boot-key:
+    @#!/usr/bin/env bash
+    set -euo pipefail
+    cert=/usr/share/muramasa/secure-boot/secure-boot.crt
+    if command -v mokutil >/dev/null 2>&1; then
+        mokutil --import "$cert"
+        echo "Reboot and complete MOK enrollment in the firmware UI."
+    else
+        echo "mokutil is unavailable; copy $cert to your firmware key store manually."
+    fi
+
 # Verify the native Steam launcher installed in the image.
 verify-steam:
     @#!/usr/bin/env bash

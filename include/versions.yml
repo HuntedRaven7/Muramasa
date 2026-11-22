@@ -33,6 +33,15 @@ variables:
   playerctl-ref: "b19a71cb9dba635df68d271bd2b3f6a99336a223"
   grim-ref: "47e2658619c6b5a790732c5876fb84e8273f08a9"
   slurp-ref: "a3998d3ec79fbd85b81911f43010466b032ed0d9"
+  xdg-desktop-portal-wlr-ref: "8388b8a6214470462146840e92909aff5983eeac"
+  gtk4-ref: "e963b237dbea5e485fdf2b2594a17b574dac5f83"
+  libadwaita-ref: "39fff6661b28cce7b332ad5692b4efb21967d50d"
+
+  # --- Display manager -----------------------------------------------------
+  ly-ref: "747955ce3b654039c2aab9c2dbc089c26b07953c"
+  zig-version: "0.17.0"
+  zig-amd64-sha256: "1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026"
+  zig-arm64-sha256: "9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8"
 
   # --- Gaming ---------------------------------------------------------------
   ogc-localversion: "-ogc1"

@@ -16,6 +16,7 @@ and Bluefin artifact caches because they are FSDK-based too.
 ## What ships
 
 - **Compositor:** Mango, pinned to a reviewed upstream commit
+- **Login:** Ly display manager with a Tokyo Night (night) themed login screen
 - **Shell runtime:** Quickshell v0.3.2, built from the signed upstream tag
 - **WC tooling:** rofi, wl-clipboard, wtype, mako, swayosd, playerctl, grim +
   slurp, PipeWire/WirePlumber, portals, polkit, GNOME Keyring
@@ -30,6 +31,8 @@ and Bluefin artifact caches because they are FSDK-based too.
 - **Agent-focused defaults:** `AGENTS.md`, task skills and `ujust` automation
 - **PR-only workflow:** protected `testing` (primary) and `stable` (promotion)
   branches, required CI checks, squash merges and linear history
+- **Docs are part of every change:** see [AGENTS.md](AGENTS.md) and the
+  [documentation index](docs/README.md)
 
 ## Image streams
 

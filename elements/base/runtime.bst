@@ -21,6 +21,8 @@ depends:
 - freedesktop-sdk.bst:components/shadow.bst
 - freedesktop-sdk.bst:components/linux-pam.bst
 - freedesktop-sdk.bst:components/polkit.bst
+- freedesktop-sdk.bst:components/audit.bst
+- freedesktop-sdk.bst:bootstrap/libselinux.bst
 - freedesktop-sdk.bst:components/networkmanager.bst
 - freedesktop-sdk.bst:components/openssh.bst
 - files/runtime.bst

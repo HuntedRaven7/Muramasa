@@ -6,6 +6,12 @@ build-depends:
 - freedesktop-sdk.bst:components/glib.bst
 - freedesktop-sdk.bst:components/libarchive.bst
 - freedesktop-sdk.bst:components/gobject-introspection.bst
+- freedesktop-sdk.bst:components/gtk3.bst
+- freedesktop-sdk.bst:components/pango.bst
+- freedesktop-sdk.bst:components/cairo.bst
+- freedesktop-sdk.bst:components/wayland.bst
+- tooling/gtk4.bst
+- tooling/libadwaita.bst
 
 sources:
 - kind: git_repo

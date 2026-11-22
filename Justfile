@@ -135,6 +135,10 @@ clean:
 e2e image="{{registry}}/muramasa:testing":
     IMAGE="{{image}}" PODMAN="{{podman}}" ./testsuite/smoke.sh
 
+# Generate the development Secure Boot keypair (private key is gitignored).
+keys:
+    ./scripts/gen-dev-keys.sh
+
 # Apply branch protection rules (needs ADMIN_TOKEN or GH_TOKEN with admin rights).
 protect:
     ./scripts/apply-branch-protection.sh

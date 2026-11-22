@@ -10,6 +10,7 @@ depends:
 - freedesktop-sdk.bst:components/pipewire.bst
 - freedesktop-sdk.bst:components/wireplumber.bst
 - freedesktop-sdk.bst:components/xdg-desktop-portal.bst
+- tooling/xdg-desktop-portal-wlr.bst
 - freedesktop-sdk.bst:components/gsettings-desktop-schemas.bst
 - freedesktop-sdk.bst:components/desktop-file-utils.bst
 - freedesktop-sdk.bst:components/shared-mime-info.bst
