@@ -1,3 +1,4 @@
+#!/bin/sh
 # Start the Mango session automatically on the first virtual terminal.
 # Guarded so SSH logins and non-tty shells are unaffected.
 if [ -z "${WAYLAND_DISPLAY:-}" ] && [ "$(tty)" = "/dev/tty1" ]; then

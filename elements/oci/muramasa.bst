@@ -5,7 +5,7 @@ description: |
   installs it to the ESP automatically.
 
 build-depends:
-- base/sandbox-tools.bst
+- core/sandbox-tools.bst
 - freedesktop-sdk.bst:components/oci-builder.bst
 - freedesktop-sdk.bst:components/libcap.bst
 - filename: oci/rootfs.bst
