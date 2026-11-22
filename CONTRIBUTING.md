@@ -2,6 +2,9 @@
 
 Muramasa uses two branches: `testing` is the primary/default branch for all
 development, and `stable` is the promotion branch for released digests.
+**All changes must come through a pull request** — direct pushes, force pushes
+and deletions on both branches are blocked by branch protection. See
+`docs/BRANCH_PROTECTION.md`.
 
 ## Before opening a PR
 

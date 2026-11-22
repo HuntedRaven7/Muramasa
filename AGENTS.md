@@ -13,8 +13,12 @@ shell configuration files to this repository**.
   `just track`, review the diff, then open a PR. No mutable refs in elements.
 - Both GPU flavors are built from this one tree: `nvidia=false` (default) and
   `nvidia=true`. Never fork the element graph for a flavor.
-- `testing` is the development branch. `stable` is a digest promotion, never a
-  rebuild. `testing` is the primary/default branch; `stable` is the promotion branch.
+- `testing` is the primary/default branch. `stable` is the promotion branch: a
+  digest is promoted there, never rebuilt.
+- **Everything goes through a pull request.** Never push commits directly to
+  `testing` or `stable`, and never force-push either branch. Open a PR from a
+  topic branch, let CI pass, get an approval, and squash-merge. Branch
+  protection enforces this; see `docs/BRANCH_PROTECTION.md`.
 
 ## Layout
 
@@ -27,6 +31,7 @@ shell configuration files to this repository**.
 | `tests/` | Content assertions run in CI |
 | `.agents/skills/` | Task-specific guidance for coding agents |
 | `.github/workflows/` | Build, quality, cache cleanup, release automation |
+| `.github/branch-protection/` | Branch protection API payloads for `testing` and `stable` |
 
 ## Build and test
 
@@ -52,8 +57,15 @@ declared in `project.conf`. See `docs/CACHE.md`.
 
 ## Pull requests
 
+All changes land via PR. Direct pushes to `testing` and `stable` are blocked by
+branch protection, so work from a topic branch and open the PR against
+`testing`. `stable` only changes through the release promotion workflow.
+
 - Use Conventional Commits titles (`feat:`, `fix:`, `chore:`, `docs:`).
 - Run `just validate` and `just test` before pushing.
+- Required checks: `validate`, `image (base)`, `image (nvidia)`, `pre-commit`,
+  `codeql`, `scorecard`.
+- Squash merges only; linear history is required.
 - Update `include/versions.yml` and `docs/` together when a pin changes.
 - Do not commit generated artifacts (`.build-out/`, `sbom_out/`, raw images).
 

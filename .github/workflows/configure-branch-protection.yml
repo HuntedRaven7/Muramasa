@@ -1,0 +1,36 @@
+name: configure-branch-protection
+
+# Applies the checked-in protection payloads to `testing` and `stable`.
+# GITHUB_TOKEN is not permitted to change branch protection, so this workflow
+# requires a repository secret ADMIN_TOKEN: a PAT (or GitHub App token) with
+# repository administration rights. Run it once after pushing the payloads,
+# and again whenever they change.
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: testing
+      - name: Verify admin token is configured
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          if [ -z "${ADMIN_TOKEN}" ]; then
+            echo "Repository secret ADMIN_TOKEN is not set. Add a token with" >&2
+            echo "repository administration rights before running this workflow." >&2
+            exit 1
+          fi
+      - name: Apply protection payloads
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: ./scripts/apply-branch-protection.sh

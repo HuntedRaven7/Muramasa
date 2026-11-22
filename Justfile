@@ -131,6 +131,10 @@ clean:
     rm -rf .build-out sbom_out
     {{podman}} rmi "{{image_name}}:{{image_tag}}" || true
 
+# Apply branch protection rules (needs ADMIN_TOKEN or GH_TOKEN with admin rights).
+protect:
+    ./scripts/apply-branch-protection.sh
+
 # Check host prerequisites without building anything.
 doctor:
     #!/usr/bin/env bash

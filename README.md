@@ -28,6 +28,8 @@ and Bluefin artifact caches because they are FSDK-based too.
   (with Dakota's full 32-bit compatibility stack), plus NVIDIA and non-NVIDIA
   image flavors from a single source tree
 - **Agent-focused defaults:** `AGENTS.md`, task skills and `ujust` automation
+- **PR-only workflow:** protected `testing` (primary) and `stable` (promotion)
+  branches, required CI checks, squash merges and linear history
 
 ## Image streams
 
