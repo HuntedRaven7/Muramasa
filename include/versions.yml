@@ -24,6 +24,15 @@ variables:
   # that FSDK does not carry are pinned here.
   kitty-ref: "6946bd317e41dd7c43517425f74f09da6aa86350"
   nautilus-ref: "cdce9fcaacfc4240bd0f9b302bef6f48046aec13"
+  # FSDK 26.08 does not carry these WC tools; build them from pinned sources.
+  rofi-ref: "9b0363ca542ff0d63e46093eb33bfd0053933b96"
+  wl-clipboard-ref: "5ec4f89937614abe70f49f93c79b0d97716487fd"
+  wtype-ref: "4b9cc29664f178cf380ccfe7f98405d38dffda3c"
+  mako-ref: "d87aa6fe266f76248784eb024db9ae8584ea4a86"
+  swayosd-ref: "42f4a3190f0449042db00d1cbb39b8b626d63c7b"
+  playerctl-ref: "b19a71cb9dba635df68d271bd2b3f6a99336a223"
+  grim-ref: "47e2658619c6b5a790732c5876fb84e8273f08a9"
+  slurp-ref: "a3998d3ec79fbd85b81911f43010466b032ed0d9"
 
   # --- Gaming ---------------------------------------------------------------
   ogc-localversion: "-ogc1"

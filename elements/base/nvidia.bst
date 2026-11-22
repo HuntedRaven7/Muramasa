@@ -5,6 +5,4 @@ description: |
   tweaks needed by Mango and gamescope.
 
 depends:
-- freedesktop-sdk.bst:components/nvidia-drivers.bst
-- freedesktop-sdk.bst:components/nvidia-utils.bst
 - files/nvidia.bst

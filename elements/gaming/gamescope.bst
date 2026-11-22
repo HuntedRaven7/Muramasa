@@ -6,11 +6,10 @@ description: |
 
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
-- freedesktop-sdk.bst:components/wlroots.bst
 - freedesktop-sdk.bst:components/xwayland.bst
 - freedesktop-sdk.bst:components/libdrm.bst
-- freedesktop-sdk.bst:components/vulkan-loader.bst
-- freedesktop-sdk.bst:components/mesa.bst
+- freedesktop-sdk.bst:components/vulkan-icd-loader.bst
+- freedesktop-sdk.bst:extensions/mesa/mesa.bst
 - freedesktop-sdk.bst:components/pixman.bst
 
 sources:

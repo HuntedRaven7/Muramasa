@@ -5,7 +5,6 @@ description: |
 
 build-depends:
 - core/sandbox-tools.bst
-- freedesktop-sdk.bst:components/just.bst
 
 sources:
 - kind: local

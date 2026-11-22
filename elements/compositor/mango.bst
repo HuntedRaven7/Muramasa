@@ -6,9 +6,6 @@ description: |
 
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
-- freedesktop-sdk.bst:components/wlroots.bst
-- freedesktop-sdk.bst:components/scenefx.bst
-- freedesktop-sdk.bst:components/cjson.bst
 - freedesktop-sdk.bst:components/pango.bst
 - freedesktop-sdk.bst:components/pixman.bst
 - freedesktop-sdk.bst:components/xwayland.bst
