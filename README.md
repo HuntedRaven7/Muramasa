@@ -33,6 +33,8 @@ and Bluefin artifact caches because they are FSDK-based too.
   branches, required CI checks, squash merges and linear history
 - **Docs are part of every change:** see [AGENTS.md](AGENTS.md) and the
   [documentation index](docs/README.md)
+- **Approved vision:** [STRATEGY.md](STRATEGY.md) defines what this image accepts
+  and resists
 
 ## Image streams
 

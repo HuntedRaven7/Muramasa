@@ -5,6 +5,7 @@ in the same PR (see `AGENTS.md`). Keep this index current when adding a page.
 
 | Page | Covers |
 | --- | --- |
+| `../STRATEGY.md` | Approved project vision and the accept/resist policy |
 | `ARCHITECTURE.md` | Build graph, GPU flavors, boot model, deliberate omissions |
 | `BUILD.md` | Prerequisites, local build, CI pipeline, source tracking |
 | `CACHE.md` | Upstream caches and the GHCR OCI cache |
