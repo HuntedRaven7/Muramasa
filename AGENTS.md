@@ -17,8 +17,9 @@ shell configuration files to this repository**.
   digest is promoted there, never rebuilt.
 - **Everything goes through a pull request.** Never push commits directly to
   `testing` or `stable`, and never force-push either branch. Open a PR from a
-  topic branch, let CI pass, get an approval, and squash-merge. Branch
-  protection enforces this; see `docs/BRANCH_PROTECTION.md`.
+  topic branch, let CI pass, and squash-merge. Branch protection enforces this;
+  see `docs/BRANCH_PROTECTION.md`. Approvals are currently optional so a solo
+  maintainer is not blocked; add a second reviewer to require them.
 
 ## Layout
 

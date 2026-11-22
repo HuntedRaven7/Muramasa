@@ -8,8 +8,14 @@ Muramasa has two protected branches:
 | `stable` | Promotion branch. Receives released digests, never rebuilds. |
 
 **Nothing is pushed directly to either branch.** Work happens on topic
-branches, CI passes, one approval is required, and merges are squashed. Force
-pushes, branch deletion and direct commits are blocked, including for admins.
+branches, CI passes, and merges are squashed. Force pushes, branch deletion and
+direct commits are blocked, including for admins.
+
+A pull request is required, but `required_approving_review_count` is `0` so a
+solo maintainer is not locked out: GitHub does not let you approve your own PR.
+Once a second reviewer exists, change both payloads to `1` (and set
+`require_last_push_approval` to `true`), re-run the apply workflow, and PRs
+will need that review.
 
 ## Rules
 
@@ -23,8 +29,8 @@ pushes, branch deletion and direct commits are blocked, including for admins.
 protected only by the PR/review and no-force-push rules.
 
 Both branches require:
-- a pull request with one approving review
-- dismissal of stale reviews and approval of the latest push
+- a pull request
+- dismissal of stale reviews (enabled, but no approvals are required yet)
 - linear history and resolved conversations
 - no force pushes or deletions
 
