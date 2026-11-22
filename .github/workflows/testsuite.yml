@@ -34,8 +34,8 @@ jobs:
       image: ${{ inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
       suites: common
       test_ref: v1
-      # Muramasa ships SELinux userspace but no compiled policy yet.
-      selinux_enforcing: false
+      # Muramasa ships a monolithic targeted refpolicy and boots enforcing.
+      selinux_enforcing: true
     secrets: inherit
 
   muramasa-smoke:

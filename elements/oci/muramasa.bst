@@ -12,15 +12,13 @@ build-depends:
 - filename: oci/rootfs.bst
   config:
     location: /rootfs
+- filename: files/boot-keys.bst
+  config:
+    location: /keys
 
 variables:
   strip-binaries: ''
   image-repo: '%{image-name}'
-
-sources:
-- kind: local
-  path: files/boot-keys
-  directory: keys
 
 config:
   commands:

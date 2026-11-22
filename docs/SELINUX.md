@@ -1,21 +1,25 @@
 # SELinux
 
-Muramasa ships SELinux userspace (`libselinux`, `audit`) and logs denials, but
-it does **not yet ship a compiled policy**. freedesktop-sdk 26.08 provides no
-policy or policy-compiler element, so booting with `security=selinux` would
-fail with "policy not found".
+Muramasa ships a compiled **targeted SELinux policy** and boots with
+`security=selinux enforcing=1` in the UKI command line.
 
-Until a policy element lands, the UKI command line includes `selinux=0`, and
-the shared testsuite is called with `selinux_enforcing: false`. This is a
-known security gap, not a final posture.
+## What is included
 
-## Planned work
+- `security/checkpolicy.bst` builds `checkpolicy` from pinned upstream SELinux
+  tools.
+- `security/selinux-policy.bst` builds a monolithic targeted policy from pinned
+  `SELinuxProject/refpolicy`, plus a small local module
+  (`files/selinux/muramasa.te`) that allows Ly's system-service → user-session
+  transition.
+- `/etc/selinux/config` sets `SELINUX=enforcing` and `SELINUXTYPE=targeted`.
+- The runtime includes `libselinux` and `audit` for denial logging.
+- The shared testsuite is called with `selinux_enforcing: true`, so its AVC and
+  enforcing-mode gates are active.
 
-1. Add a pinned `refpolicy` source element and a `checkpolicy` build element.
-2. Build a targeted policy with Muramasa-specific allowances (notably Ly's
-   process transition — see Ly's README for the AVC pattern).
-3. Add `security=selinux enforcing=1` to the UKI command line.
-4. Flip `selinux_enforcing` to `true` in `.github/workflows/testsuite.yml`
-   and enable the AVC gate.
+## Remaining work
 
-Until step 4, do not treat SELinux checks as passing in the shared suite.
+File contexts are compiled by refpolicy, but `policycoreutils` tools such as
+`restorecon` are not yet installed. Files written outside bootc-managed paths
+may therefore be unlabeled until those tools are added. If the testsuite
+reports AVC denials, check `ausearch -m avc -ts recent` in the VM and extend
+`files/selinux/muramasa.te` rather than turning enforcement off.

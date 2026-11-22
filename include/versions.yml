@@ -43,6 +43,10 @@ variables:
   zig-amd64-sha256: "1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026"
   zig-arm64-sha256: "9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8"
 
+  # --- SELinux -------------------------------------------------------------
+  selinux-tools-ref: "f0736c7ed19f4cfe31bcd17b356da9244974ca9d"
+  refpolicy-ref: "c89bd1537a63c4a332945897fa34bed81f2921a3"
+
   # --- Gaming ---------------------------------------------------------------
   ogc-localversion: "-ogc1"
   ogc-kernel-ref: "v7.3.3-ogc1-0-ga66e9e735fa99a7844fe18b0af0651737589f61a"

@@ -1,0 +1,12 @@
+policy_module(muramasa, 1.0)
+
+require {
+    type initrc_t;
+    type unconfined_t;
+    class process transition;
+}
+
+# Ly is launched as a system service but starts user sessions. Allow the
+# transition into the unconfined user domain (see Ly's README for the AVC this
+# addresses).
+allow initrc_t unconfined_t:process transition;

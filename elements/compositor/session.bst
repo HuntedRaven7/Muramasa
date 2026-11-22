@@ -18,4 +18,5 @@ depends:
 - files/os-release.bst
 - files/secure-boot.bst
 - session/ly.bst
+- security/selinux-policy.bst
 - base/nvidia.bst
