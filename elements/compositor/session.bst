@@ -16,6 +16,4 @@ depends:
 - agent/agent.bst
 - files/session.bst
 - files/os-release.bst
-- (?):
-  - nvidia == true:
-    - base/nvidia.bst
+- base/nvidia.bst
