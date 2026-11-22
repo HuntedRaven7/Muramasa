@@ -12,6 +12,9 @@ build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/pipewire.bst
+- compositor/qt6-base.bst
+- compositor/qt6-declarative.bst
+- compositor/qt6-svg.bst
 
 sources:
 - kind: git_repo

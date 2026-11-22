@@ -64,3 +64,7 @@ left to the user or a future image-level default.
 `xdg-desktop-portal-wlr` is built from pinned source alongside FSDK's
 `xdg-desktop-portal`, so screenshots and screen sharing work with Mango.
 GTK4 and libadwaita are also built from pinned sources for Nautilus.
+Because FSDK 26.08 carries neither a compositor stack nor Qt6, Mango's
+dependencies (`wlroots` 0.20, `scenefx` 0.5, cJSON) and Quickshell's Qt6 modules
+(qtbase, qtdeclarative, qtsvg) are built from pinned upstream sources in
+`elements/compositor/`.

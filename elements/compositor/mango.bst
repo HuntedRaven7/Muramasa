@@ -9,6 +9,9 @@ build-depends:
 - freedesktop-sdk.bst:components/pango.bst
 - freedesktop-sdk.bst:components/pixman.bst
 - freedesktop-sdk.bst:components/xwayland.bst
+- compositor/wlroots.bst
+- compositor/scenefx.bst
+- compositor/cjson.bst
 
 sources:
 - kind: git_repo

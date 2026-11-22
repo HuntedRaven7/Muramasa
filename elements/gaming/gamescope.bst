@@ -11,6 +11,7 @@ build-depends:
 - freedesktop-sdk.bst:components/vulkan-icd-loader.bst
 - freedesktop-sdk.bst:extensions/mesa/mesa.bst
 - freedesktop-sdk.bst:components/pixman.bst
+- compositor/wlroots.bst
 
 sources:
 - kind: git_repo
