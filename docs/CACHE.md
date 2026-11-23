@@ -22,8 +22,11 @@ directory as an OCI artifact.
 ## Key scheme
 
 `BST_CACHE_KEY` is derived from `project.conf`, `include/versions.yml`, and
-`elements/freedesktop-sdk.bst`. A build writes the key only when it succeeds;
-a failed build clears the key so a partial cache is never advertised as
+`elements/freedesktop-sdk.bst` and is written only by a successful build.
+Failed or timed-out builds write `BST_CACHE_FALLBACK_KEY`, a rolling
+`-partial` tag. Pull tries the complete key first and falls back to the
+partial tag, so a long source build accumulates artifacts across attempts
+instead of starting cold each time. The partial tag never claims a build was
 complete. `cache-clean.yml` prunes old cache tags.
 
 ## Local use

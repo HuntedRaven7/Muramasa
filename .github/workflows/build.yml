@@ -36,7 +36,7 @@ jobs:
   image:
     needs: validate
     runs-on: ubuntu-24.04
-    timeout-minutes: 240
+    timeout-minutes: 360
     env:
       PODMAN: "sudo podman"
     permissions:
@@ -82,6 +82,7 @@ jobs:
       - name: Cache key
         run: |
           echo "BST_CACHE_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-${{ hashFiles('project.conf', 'include/versions.yml', 'elements/freedesktop-sdk.bst') }}" >> "$GITHUB_ENV"
+          echo "BST_CACHE_FALLBACK_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-partial" >> "$GITHUB_ENV"
           echo "BST_CACHE_REF=ghcr.io/${{ env.IMAGE_OWNER }}/muramasa-cache" >> "$GITHUB_ENV"
 
       - name: Stage Secure Boot keys (optional)
@@ -192,6 +193,8 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
           if [ "${{ steps.build-image.outcome }}" != "success" ]; then
+            # Never advertise a partial build as complete, but keep its
+            # artifacts so the next attempt is not cold.
             unset BST_CACHE_KEY
           fi
           just cache-push
