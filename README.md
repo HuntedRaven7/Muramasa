@@ -25,6 +25,7 @@ and Bluefin artifact caches because they are FSDK-based too.
   x86-64-v3 builds on x86_64
 - **Container tooling:** Homebrew (Dakota-style) with Docker available through
   `ujust install-docker`; podman remains available for daemonless workflows
+- **Application store:** Flatpark remote plus Bazaar preinstalled on first boot
 - **Gaming:** gamescope and native Steam from Valve's pinned launcher `.deb`
   (with Dakota's full 32-bit compatibility stack), plus NVIDIA and non-NVIDIA
   image flavors from a single source tree

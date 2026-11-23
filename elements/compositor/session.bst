@@ -17,6 +17,7 @@ depends:
 - files/session.bst
 - files/os-release.bst
 - files/secure-boot.bst
+- files/flatpak.bst
 - session/ly.bst
 - security/selinux-policy.bst
 - base/nvidia.bst

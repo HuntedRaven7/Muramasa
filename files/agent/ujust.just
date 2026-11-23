@@ -40,6 +40,12 @@ enroll-secure-boot-key:
         echo "mokutil is unavailable; copy $cert to your firmware key store manually."
     fi
 
+# Install the default system Flatpaks (Bazaar) from the Brewfile.
+install-system-flatpaks:
+    @#!/usr/bin/env bash
+    set -euo pipefail
+    brew bundle --file /usr/share/muramasa/brew/system-flatpaks.Brewfile
+
 # Verify the native Steam launcher installed in the image.
 verify-steam:
     @#!/usr/bin/env bash

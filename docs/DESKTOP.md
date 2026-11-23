@@ -64,6 +64,17 @@ left to the user or a future image-level default.
 `xdg-desktop-portal-wlr` is built from pinned source alongside FSDK's
 `xdg-desktop-portal`, so screenshots and screen sharing work with Mango.
 GTK4 and libadwaita are also built from pinned sources for Nautilus.
+
+## Application store
+
+The Flatpark remote is installed system-wide from the signed
+`/usr/share/flatpak/remotes.d/flatpark.flatpakrepo`, with the shared
+`flatpark.filter` copied into the Flatpak repo for sandboxed store frontends.
+[Bazaar](https://gitlab.gnome.org/World/bazaar) is preinstalled on first boot
+via `/usr/share/flatpak/preinstall.d/bazaar.preinstall`, and its
+`host-etc` override is linked into `/var/lib/flatpak/overrides` by tmpfiles.
+`ujust install-system-flatpaks` installs the same set through Homebrew for
+users who want it immediately.
 Because FSDK 26.08 carries neither a compositor stack nor Qt6, Mango's
 dependencies (`wlroots` 0.20, `scenefx` 0.5, cJSON) and Quickshell's Qt6 modules
 (qtbase, qtdeclarative, qtsvg and qtwayland) are built from pinned release tags
