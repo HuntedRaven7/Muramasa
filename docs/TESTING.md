@@ -37,7 +37,7 @@ just e2e                       # local Mango smoke against a local image
 IMAGE=... ./testsuite/smoke.sh # point at a published image
 ```
 
-`testsuite.yml` runs after successful `build` runs on `testing`, and can be
-dispatched manually. Both jobs are informational initially; after a stable
-green history, add them to the required checks in
-`.github/branch-protection/testing.json`.
+`testsuite.yml` runs on PRs, after successful `build` runs on `testing`, and on
+manual dispatch. Both jobs are now required checks on `testing`; on PRs they
+test the last published `:testing` image until the workflow can consume a
+PR-built artifact.

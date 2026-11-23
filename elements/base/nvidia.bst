@@ -8,3 +8,4 @@ description: |
 - nvidia == true:
     depends:
     - files/nvidia.bst
+    - nvidia/stack.bst

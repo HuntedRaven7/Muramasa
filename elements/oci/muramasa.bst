@@ -8,6 +8,7 @@ build-depends:
 - core/sandbox-tools.bst
 - freedesktop-sdk.bst:components/oci-builder.bst
 - freedesktop-sdk.bst:components/libcap.bst
+- freedesktop-sdk.bst:components/kmod.bst
 - freedesktop-sdk.bst:components/sbsigntools-maybe.bst
 - filename: oci/rootfs.bst
   config:
@@ -32,6 +33,13 @@ config:
         --output /tmp/muramasa.efi.signed \
         /rootfs/boot/EFI/Linux/muramasa.efi
       cp /tmp/muramasa.efi.signed /rootfs/boot/EFI/Linux/muramasa.efi
+    fi
+    # Rebuild module dependency maps after the NVIDIA flavor adds modules.
+    if [ -d /rootfs/usr/lib/modules ]; then
+      for moddir in /rootfs/usr/lib/modules/*; do
+        [ -d "$moddir" ] || continue
+        depmod -b /rootfs "$(basename "$moddir")"
+      done
     fi
     cd "%{install-root}"
     build-oci <<'EOF'

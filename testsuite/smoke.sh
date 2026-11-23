@@ -50,6 +50,8 @@ check "Brew preinstall service" 'test -f /usr/lib/systemd/user/brew-preinstall.s
 check "Brew CLI Brewfile" 'test -f /usr/share/muramasa/brew/preinstall.d/cli.Brewfile'
 check "Hardware udev rules" 'test -d /usr/lib/udev/rules.d && find /usr/lib/udev/rules.d -name "*.rules" | grep -q .'
 check "bootc sudoers" 'test -f /etc/sudoers.d/muramasa-bootc'
+check "Bluetooth stack" 'command -v bluetoothctl >/dev/null 2>&1'
+check "XDG user dirs unit" 'test -f /usr/lib/systemd/user/xdg-user-dirs.service'
 check "UKI present" 'test -f /boot/EFI/Linux/muramasa.efi'
 check "OGC kernel version recorded" 'test -s /usr/share/muramasa/kernel-version'
 check "Steam launcher payload" 'test -x /usr/lib/steam/steam.sh'

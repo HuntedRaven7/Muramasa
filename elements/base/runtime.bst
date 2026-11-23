@@ -22,6 +22,9 @@ depends:
 - freedesktop-sdk.bst:components/linux-pam.bst
 - freedesktop-sdk.bst:components/polkit.bst
 - freedesktop-sdk.bst:components/audit.bst
+- freedesktop-sdk.bst:components/bluez.bst
+- freedesktop-sdk.bst:components/bluez-libs.bst
+- freedesktop-sdk.bst:components/xdg-user-dirs.bst
 - freedesktop-sdk.bst:bootstrap/libselinux.bst
 - freedesktop-sdk.bst:components/networkmanager.bst
 - freedesktop-sdk.bst:components/openssh.bst

@@ -83,6 +83,9 @@ a current catalog.
 
 ## Hardware enablement
 
+Firewalld is built from pinned upstream source with the nftables backend and
+enabled by preset. Bluetooth support (BlueZ) is installed from FSDK.
+
 The hardware udev rules and the AMD legacy modprobe quirk from
 `projectbluefin/common` are installed system-wide. The NVIDIA flavor also gets
 the suspend quirk (`NVreg_UseKernelSuspendNotifiers` and a disk-backed VRAM

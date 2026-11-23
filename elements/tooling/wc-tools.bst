@@ -7,6 +7,7 @@ description: |
 
 depends:
 - freedesktop-sdk.bst:components/flatpak.bst
+- tooling/firewalld.bst
 - freedesktop-sdk.bst:components/pipewire.bst
 - freedesktop-sdk.bst:components/wireplumber.bst
 - freedesktop-sdk.bst:components/xdg-desktop-portal.bst

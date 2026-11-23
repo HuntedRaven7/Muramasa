@@ -9,6 +9,8 @@ name: testsuite
 # jobs have a stable green history. See docs/TESTING.md.
 
 on:
+  pull_request:
+    branches: [testing]
   workflow_run:
     workflows: [build]
     types: [completed]
@@ -27,6 +29,7 @@ jobs:
     name: Shared common suite
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'pull_request' ||
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     uses: projectbluefin/testsuite/.github/workflows/e2e.yml@525c6b074ead63e50f0d90b54218d2c344454a5d # v1
@@ -42,6 +45,7 @@ jobs:
     name: Mango desktop smoke
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'pull_request' ||
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push')
     runs-on: ubuntu-24.04

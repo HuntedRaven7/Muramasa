@@ -7,7 +7,9 @@
       "image (nvidia)",
       "pre-commit",
       "codeql",
-      "scorecard"
+      "scorecard",
+      "Shared common suite",
+      "Mango desktop smoke"
     ]
   },
   "enforce_admins": true,

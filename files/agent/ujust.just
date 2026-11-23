@@ -40,6 +40,40 @@ enroll-secure-boot-key:
         echo "mokutil is unavailable; copy $cert to your firmware key store manually."
     fi
 
+# Capture system state, review it, and file a user-reviewed issue.
+report:
+    @#!/usr/bin/env bash
+    set -euo pipefail
+    command -v gh >/dev/null 2>&1 || { echo "gh is required for reporting" >&2; exit 1; }
+    body=$(mktemp)
+    {
+        echo "## Image"; ujust status || true
+        echo; echo "## Kernel"; uname -a
+        echo; echo "## Failed units"; systemctl --failed --no-pager || true
+        echo; echo "## Compositor"; command -v mango || true
+    } > "$body"
+    echo "--- report preview ---"; cat "$body"; echo "----------------------"
+    read -r -p "Publish this as a GitHub issue? [y/N] " answer
+    [ "$answer" = "y" ] || { echo "Aborted"; exit 0; }
+    gh issue create --repo HuntedRaven7/Muramasa \
+      --title "Muramasa report: $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+      --body-file "$body"
+    rm -f "$body"
+
+# Add a hardware fingerprint to an existing issue.
+confirm issue:
+    @#!/usr/bin/env bash
+    set -euo pipefail
+    { echo "Confirmed on:"; ujust status || true; uname -a; } \
+      | gh issue comment "{{issue}}" --repo HuntedRaven7/Muramasa --body-file -
+
+# Confirm a fix works after a nightly update.
+verify issue:
+    @#!/usr/bin/env bash
+    set -euo pipefail
+    { echo "Verified on:"; ujust status || true; uname -a; } \
+      | gh issue comment "{{issue}}" --repo HuntedRaven7/Muramasa --body-file -
+
 # Install the default system Flatpaks (Bazaar) from the Brewfile.
 install-system-flatpaks:
     @#!/usr/bin/env bash

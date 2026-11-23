@@ -63,6 +63,14 @@ variables:
   zig-amd64-sha256: "1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026"
   zig-arm64-sha256: "9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8"
 
+  # --- Firewall / system services ------------------------------------------
+  firewalld-ref: "5736c0b77abdf748e59b20a1cb4fbd7382cd2f7f"
+  intltool-sha256: "36cd8fe249d0cc20918b6d4583267208bf74c8d541c67a5fe63316846344f9f7"
+
+  # --- NVIDIA --------------------------------------------------------------
+  nvidia-version: "615.78.08"
+  nvidia-run-sha256: "3e3f6dddc2ee767a08185300af7be3cb286ece76698d2dde3524599782d07ffe"
+
   # --- SELinux -------------------------------------------------------------
   selinux-tools-ref: "f0736c7ed19f4cfe31bcd17b356da9244974ca9d"
   refpolicy-ref: "c89bd1537a63c4a332945897fa34bed81f2921a3"
