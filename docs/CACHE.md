@@ -30,7 +30,11 @@ instead of starting cold each time. The partial tag never claims a build was
 complete. Before archiving, CI stops any leftover `bst2` container so
 BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
 state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*`), which is recreated on
-restore. `cache-clean.yml` prunes old cache tags.
+restore. The archive is written with a relative path because `oras` rejects
+absolute file paths. The FSDK junction mirrors Dakota's boolean
+`x86_64_v3` conditional so artifact keys match the upstream caches; passing a
+string variable would change every key and force a full rebuild.
+`cache-clean.yml` prunes old cache tags.
 
 ## Local use
 

@@ -17,7 +17,9 @@
 set -euo pipefail
 
 CACHE_DIR="${HOME}/.cache/buildstream"
-CACHE_ARCHIVE="${CACHE_DIR}.tar.zst"
+# oras rejects absolute file paths unless --disable-path-validation is used.
+# Keep the archive relative to the working directory (the CI workspace).
+CACHE_ARCHIVE="buildstream-cache.tar.zst"
 ACTION="${1:-}"
 
 : "${BST_CACHE_REF:?BST_CACHE_REF must be set}"
@@ -70,6 +72,7 @@ case "$ACTION" in
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"
     oras push "${BST_CACHE_REF}:${key}" \
       "${CACHE_ARCHIVE}:application/vnd.muramasa.bst-cache.v1.tar.zst"
+    rm -f "$CACHE_ARCHIVE"
     echo "Pushed cache as ${key}"
     ;;
 
