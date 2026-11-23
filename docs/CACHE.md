@@ -34,7 +34,9 @@ restore. The archive is written with a relative path because `oras` rejects
 absolute file paths. The FSDK junction mirrors Dakota's boolean
 `x86_64_v3` conditional so artifact keys match the upstream caches; passing a
 string variable would change every key and force a full rebuild.
-`cache-clean.yml` prunes old cache tags.
+Plugin junctions are pinned to Dakota's versions (`buildstream-plugins` 2.8.0
+and `buildstream-plugins-community` 2.4.0) so GBM's plugin declarations resolve
+with matching keys. `cache-clean.yml` prunes old cache tags.
 
 ## Local use
 

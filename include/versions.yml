@@ -8,8 +8,8 @@ variables:
   # --- Toolchain ------------------------------------------------------------
   fsdk-ref: "freedesktop-sdk-26.08.4-0-g114ae909ec9881958bd507c8b4414aa33f758d2b"
   bst-sbom-ref: "0706fec3bedf6f73bd9d2fed32c2aed585feef8d"
-  buildstream-plugins-ref: "2.5.0-0-g79649529cffb695d0d22195ed9a4910c80ca6907"
-  buildstream-plugins-community-ref: "85c2bae9d3a1eb3121c9674f68ef6e87211fddb9c930f3e5057b9a1e66eb41d9"
+  buildstream-plugins-ref: "2.8.0-0-g2681232038711d5c3d4ef1ecc962321c33ec72c1"
+  buildstream-plugins-community-ref: "6101ba093ed9a3c27f9faeefbcf08742b4c1e248e08c401df938bbeacbea0744"
 
   # --- Compositor and shell -------------------------------------------------
   # Mango: pinned to the reviewed main-branch commit (2026-11-21).
