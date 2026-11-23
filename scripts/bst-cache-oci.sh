@@ -58,7 +58,15 @@ case "$ACTION" in
       exit 0
     fi
     echo "${GH_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
-    tar --use-compress-program=zstd -cf "$CACHE_ARCHIVE" \
+    # Exclude volatile scratch state: the cache-server socket, FUSE mounts and
+    # staging directories. These are recreated on restore and can be unreadable
+    # or still changing while tar runs.
+    tar --use-compress-program=zstd \
+      --exclude='casserver-*.sock' \
+      --exclude='cas/tmp/*' \
+      --exclude='cas/staging/*' \
+      --warning=no-file-changed \
+      -cf "$CACHE_ARCHIVE" \
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"
     oras push "${BST_CACHE_REF}:${key}" \
       "${CACHE_ARCHIVE}:application/vnd.muramasa.bst-cache.v1.tar.zst"

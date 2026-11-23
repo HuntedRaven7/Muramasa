@@ -192,6 +192,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
+          # A timed-out job can leave the bst2 container running and still
+          # writing to the bind-mounted cache. Stop it before archiving.
+          sudo podman ps -aq | xargs -r sudo podman rm -f >/dev/null 2>&1 || true
+          sleep 2
           if [ "${{ steps.build-image.outcome }}" != "success" ]; then
             # Never advertise a partial build as complete, but keep its
             # artifacts so the next attempt is not cold.

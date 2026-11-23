@@ -27,7 +27,10 @@ Failed or timed-out builds write `BST_CACHE_FALLBACK_KEY`, a rolling
 `-partial` tag. Pull tries the complete key first and falls back to the
 partial tag, so a long source build accumulates artifacts across attempts
 instead of starting cold each time. The partial tag never claims a build was
-complete. `cache-clean.yml` prunes old cache tags.
+complete. Before archiving, CI stops any leftover `bst2` container so
+BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
+state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*`), which is recreated on
+restore. `cache-clean.yml` prunes old cache tags.
 
 ## Local use
 
