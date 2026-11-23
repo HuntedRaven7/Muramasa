@@ -1,0 +1,2 @@
+muramasa ALL=(ALL) NOPASSWD: /usr/bin/bootc upgrade
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/bootc upgrade

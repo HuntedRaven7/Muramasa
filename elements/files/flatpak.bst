@@ -31,6 +31,12 @@ config:
       "%{install-root}%{prefix}/lib/systemd/system/flatpark-filter-copy.service"
     install -Dm644 systemd/system/flatpak-preinstall.service \
       "%{install-root}%{prefix}/lib/systemd/system/flatpak-preinstall.service"
+    install -Dm644 systemd/system/flatpak-appstream-refresh.service \
+      "%{install-root}%{prefix}/lib/systemd/system/flatpak-appstream-refresh.service"
+    install -Dm644 systemd/system/flatpak-appstream-refresh.timer \
+      "%{install-root}%{prefix}/lib/systemd/system/flatpak-appstream-refresh.timer"
+    install -Dm644 systemd/system-preset/02-flatpak-appstream-refresh.preset \
+      "%{install-root}%{prefix}/lib/systemd/system-preset/02-flatpak-appstream-refresh.preset"
     install -Dm644 systemd/user/bazaar.service \
       "%{install-root}%{prefix}/lib/systemd/user/bazaar.service"
 

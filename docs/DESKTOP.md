@@ -78,6 +78,16 @@ users who want it immediately.
 
 New accounts also get user-level Flatpak overrides for VS Code (Wayland socket
 and Podman socket) and Chrome (local applications and icons directories).
+A timer refreshes Flatpak appstream metadata shortly after boot so Bazaar has
+a current catalog.
+
+## Hardware enablement
+
+The hardware udev rules and the AMD legacy modprobe quirk from
+`projectbluefin/common` are installed system-wide. The NVIDIA flavor also gets
+the suspend quirk (`NVreg_UseKernelSuspendNotifiers` and a disk-backed VRAM
+save path) with its tmpfiles directory. These are inert when the NVIDIA module
+is absent.
 Because FSDK 26.08 carries neither a compositor stack nor Qt6, Mango's
 dependencies (`wlroots` 0.20, `scenefx` 0.5, cJSON) and Quickshell's Qt6 modules
 (qtbase, qtdeclarative, qtsvg and qtwayland) are built from pinned release tags

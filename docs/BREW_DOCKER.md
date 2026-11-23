@@ -37,6 +37,14 @@ verified on a real boot before treating Docker as supported:
 Podman is also installed from FSDK for daemonless containers and is the
 recommended fallback if the Homebrew Docker path proves unworkable.
 
+## Automatic package preinstall
+
+`brew-preinstall.service` applies the image-managed Brewfiles in
+`/usr/share/muramasa/brew/preinstall.d/` at first login. It is content-addressed:
+packages added to a Brewfile are installed, packages removed are uninstalled,
+and user-installed packages are left alone. Add agent/CLI tooling to
+`cli.Brewfile` in a reviewed PR; that is the intended place for your own set.
+
 ## Steam
 
 Native Steam is baked in from Valve's versioned launcher `.deb` and backed by
