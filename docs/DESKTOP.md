@@ -75,6 +75,9 @@ via `/usr/share/flatpak/preinstall.d/bazaar.preinstall`, and its
 `host-etc` override is linked into `/var/lib/flatpak/overrides` by tmpfiles.
 `ujust install-system-flatpaks` installs the same set through Homebrew for
 users who want it immediately.
+
+New accounts also get user-level Flatpak overrides for VS Code (Wayland socket
+and Podman socket) and Chrome (local applications and icons directories).
 Because FSDK 26.08 carries neither a compositor stack nor Qt6, Mango's
 dependencies (`wlroots` 0.20, `scenefx` 0.5, cJSON) and Quickshell's Qt6 modules
 (qtbase, qtdeclarative, qtsvg and qtwayland) are built from pinned release tags

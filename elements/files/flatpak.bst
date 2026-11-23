@@ -37,6 +37,13 @@ config:
     install -Dm644 system-flatpaks.Brewfile \
       "%{install-root}%{datadir}/muramasa/brew/system-flatpaks.Brewfile"
 
+    # New-user Flatpak overrides for VS Code (Wayland + Podman socket) and
+    # Chrome (local applications/icons).
+    install -Dm644 user-overrides/com.visualstudio.code \
+      "%{install-root}%{sysconfdir}/skel/.local/share/flatpak/overrides/com.visualstudio.code"
+    install -Dm644 user-overrides/com.google.Chrome \
+      "%{install-root}%{sysconfdir}/skel/.local/share/flatpak/overrides/com.google.Chrome"
+
     # Enable system units and the per-user Bazaar background service.
     install -d "%{install-root}%{sysconfdir}/systemd/system/multi-user.target.wants"
     ln -sfn "%{prefix}/lib/systemd/system/flatpak-preinstall.service" \
