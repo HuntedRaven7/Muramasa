@@ -42,11 +42,15 @@ both flavors from the same commit.
 - `containers.bootc=1` label on the OCI image
 - `bootc container lint` gates every build
 
-## Why no GNOME junction
+## GNOME Build Meta junction
 
-The GNOME and Bluefin artifact caches are reused as **pull-only** caches in
-`project.conf`. They are built on FSDK, so their FSDK artifacts satisfy our
-junction without imposing GNOME Shell or GNOME OS on the image.
+The GNOME and Bluefin artifact caches are pull-only inputs in `project.conf`.
+The FSDK junction mirrors Dakota's `x86_64_v3` boolean conditional and
+component overrides, and a pinned `gnome-build-meta.bst` junction provides the
+SDK elements those overrides reference. This makes artifact keys match the
+published GNOME cache without installing GNOME Shell or GNOME OS in the image.
+The junction carries only GNOME Build Meta's SDK elements, not a desktop
+session.
 
 ## What is deliberately absent
 
