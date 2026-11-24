@@ -118,8 +118,9 @@ jobs:
           # the next attempt can resume from completed artifacts.
           (
             while true; do
-              sleep 900
-              BST_CACHE_KEY= scripts/bst-cache-oci.sh push >/dev/null 2>&1 || true
+              sleep 300
+              echo "--- checkpointing partial BuildStream cache ---"
+              BST_CACHE_KEY= scripts/bst-cache-oci.sh push || echo "checkpoint failed, will retry"
             done
           ) &
           CACHE_SAVER_PID=$!
