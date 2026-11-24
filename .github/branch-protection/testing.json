@@ -3,8 +3,8 @@
     "strict": true,
     "contexts": [
       "validate",
-      "image (base)",
-      "image (nvidia)",
+      "image (base, false)",
+      "image (nvidia, true, -nvidia)",
       "pre-commit",
       "codeql",
       "scorecard",

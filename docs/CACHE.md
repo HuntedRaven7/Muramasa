@@ -12,6 +12,13 @@ The upstream caches are FSDK-based, so they contain reusable artifacts for our
 junction even though Muramasa does not ship GNOME Shell. They are configured in
 `project.conf` under both `artifacts` and `source-caches`.
 
+Pulling from these caches means trusting two third parties to have built the
+artifacts from exactly the pinned sources. BuildStream verifies artifact keys
+against the local element and source definitions, so a mismatched or tampered
+artifact is rejected rather than used. We still depend on GNOME and Bluefin
+being available and honest about their cache contents; the pin set in
+`include/versions.yml` is what anchors that trust.
+
 ## Why the Muramasa cache is in GHCR
 
 GitHub Actions cache has a 10 GB per-repository cap. A full FSDK cache is much

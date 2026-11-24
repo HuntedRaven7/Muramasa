@@ -70,7 +70,8 @@ branch protection, so work from a topic branch and open the PR against
 
 - Use Conventional Commits titles (`feat:`, `fix:`, `chore:`, `docs:`).
 - Run `just validate` and `just test` before pushing.
-- Required checks: `validate`, `image (base)`, `image (nvidia)`, `pre-commit`,
+- Required checks: `validate`, `image (base, false)`,
+  `image (nvidia, true, -nvidia)`, `pre-commit`,
   `codeql`, `scorecard`.
 - Squash merges only; linear history is required.
 - Update `include/versions.yml` and `docs/` together when a pin changes.

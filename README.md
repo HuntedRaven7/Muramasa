@@ -4,20 +4,23 @@ A Bootc Image Of Myth — an FSDK-based, Wayland-compositor desktop built around
 [Mango](https://github.com/mangowm/mango).
 
 Muramasa takes the BuildStream approach of Bluefin Dakota and replaces the GNOME
-desktop with a compositor-first stack. It is assembled entirely from source with
-[freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/), and reuses the GNOME
-and Bluefin artifact caches because they are FSDK-based too.
+desktop with a compositor-first stack. It is assembled from pinned source builds
+with [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/), except for a
+few deliberate prebuilt inputs: Voxtype's signed binary, Valve's pinned Steam
+launcher `.deb`, the pinned Zig toolchain, and Homebrew tarballs. It reuses the
+GNOME and Bluefin artifact caches because they are FSDK-based too.
 
 > The shell layer is intentionally not configured in this repository.
-> Quickshell v0.3.2 is installed as a binary; its configuration is supplied by
-> the image owner after installation. There is deliberately no wallpaper manager
-> in the base image.
+> Quickshell v0.3.2 is built from the signed upstream tag and installed as a
+> binary only; its configuration is supplied by the image owner after
+> installation. There is deliberately no wallpaper manager in the base image.
 
 ## What ships
 
 - **Compositor:** Mango, pinned to a reviewed upstream commit
 - **Login:** Ly display manager with a Tokyo Night (night) themed login screen
-- **Shell runtime:** Quickshell v0.3.2, built from the signed upstream tag
+- **Shell runtime:** Quickshell v0.3.2, built from the signed upstream tag as a
+  binary with no shell configuration
 - **WC tooling:** rofi, wl-clipboard, wtype, mako, swayosd, playerctl, grim +
   slurp, PipeWire/WirePlumber, portals, polkit, GNOME Keyring
 - **Applications:** kitty, Nautilus, Voxtype (signed prebuilt AVX2/CPU binary)
