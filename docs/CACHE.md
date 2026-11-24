@@ -33,7 +33,10 @@ directory as an OCI artifact.
 Failed or timed-out builds write `BST_CACHE_FALLBACK_KEY`, a rolling
 `-partial` tag. Pull tries the complete key first and falls back to the
 partial tag, so a long source build accumulates artifacts across attempts
-instead of starting cold each time. The partial tag never claims a build was
+instead of starting cold each time. Because a full FSDK bootstrap exceeds a
+single 6-hour job, the build step also checkpoints the partial cache every 15
+minutes; a timed-out run hands its completed artifacts to the next attempt.
+The partial tag never claims a build was
 complete. Before archiving, CI stops any leftover `bst2` container so
 BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
 state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*`), which is recreated on
