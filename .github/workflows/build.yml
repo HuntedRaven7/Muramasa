@@ -111,10 +111,13 @@ jobs:
 
       - name: Build and export image
         id: build-image
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
         run: |
           SIGN_ARGS=""
           # The FSDK bootstrap exceeds a single 6h job on a cold cache. Push
-          # the rolling partial cache every 15 minutes while the build runs so
+          # the rolling partial cache every 5 minutes while the build runs so
           # the next attempt can resume from completed artifacts.
           (
             while true; do
