@@ -17,7 +17,7 @@ bst *ARGS:
       -v "{{justfile_directory()}}:/src:rw" \
       -v "${HOME}/.cache/buildstream:/root/.cache/buildstream:rw" \
       -w /src "{{bst2_image}}" \
-      bash -c 'bst --colors "$@"' -- --no-interactive {{ARGS}}
+      bash -c 'git config --global --add safe.directory "*" && bst --colors "$@"' -- --no-interactive {{ARGS}}
 
 # Flavor-aware shortcut: `just flavor-build nvidia` builds -o nvidia true.
 flavor-build flavor="base":

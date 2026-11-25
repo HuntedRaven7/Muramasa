@@ -9,7 +9,9 @@
   `projectbluefin/actions/bootc-build/setup-runner`)
 
 BuildStream itself runs in the pinned FSDK `bst2` image, so no host install is
-needed. The image digest is set by `BST2_IMAGE` in the `Justfile`.
+needed. The image digest is set by `BST2_IMAGE` in the `Justfile`. The `bst`
+recipe marks restored git source directories as safe, since a seeded cache can
+contain files owned by another uid.
 
 ## Local build
 
