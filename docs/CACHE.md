@@ -46,8 +46,8 @@ Before archiving, CI stops any leftover `bst2` container and checks that at
 least 1 GiB of disk is free. The archive excludes volatile scratch state
 (`sources/*`, `casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`),
 which is recreated on restore. Transient files that disappear mid-read are
-ignored. Each push logs the source size, tar record progress, archive size and
-destination tag. The archive uses a relative path because `oras` rejects
+ignored. Each push logs the source size, archive size and destination tag. The
+archive uses a relative path because `oras` rejects
 absolute paths. The FSDK junction mirrors Dakota's boolean `x86_64_v3`
 conditional so artifact keys match the upstream caches; passing a string
 variable would change every key and force a full rebuild.

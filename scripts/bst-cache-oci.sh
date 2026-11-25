@@ -79,8 +79,6 @@ case "$ACTION" in
       --exclude='tmp/*' \
       --ignore-failed-read \
       --warning=no-file-changed \
-      --checkpoint=50 \
-      --checkpoint-action=echo='  archived %{r} records' \
       -cf "$CACHE_ARCHIVE" \
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"
     echo "Archive size: $(du -h "${CACHE_ARCHIVE}" | cut -f1)"
