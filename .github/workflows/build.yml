@@ -200,19 +200,24 @@ jobs:
           source-date-epoch: auto
 
       - name: Push image
-        if: github.event_name != 'pull_request' && steps.build-image.outputs.timeout != 'true'
+        if: steps.build-image.outputs.timeout != 'true'
         id: push
         run: |
           set -euo pipefail
           echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
             -u "${{ github.actor }}" --password-stdin
           IMAGE="ghcr.io/${{ env.IMAGE_OWNER }}/muramasa"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            TAG="pr-${{ github.event.number }}${{ matrix.flavor.suffix }}"
+          else
+            TAG="${{ steps.flavor.outputs.tag }}"
+          fi
           IMAGE_ID=$(sudo podman image inspect --format '{{.Id}}' localhost/muramasa:latest)
           sudo podman push --digestfile /tmp/muramasa-digest.txt \
-            "containers-storage:${IMAGE_ID}" "docker://${IMAGE}:${{ steps.flavor.outputs.tag }}"
+            "containers-storage:${IMAGE_ID}" "docker://${IMAGE}:${TAG}"
           DIGEST=$(cat /tmp/muramasa-digest.txt)
           echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
-          echo "Pushed ${IMAGE}:${{ steps.flavor.outputs.tag }}@${DIGEST}"
+          echo "Pushed ${IMAGE}:${TAG}@${DIGEST}"
 
       - name: Sign and attest
         if: github.event_name != 'pull_request' && steps.build-image.outputs.timeout != 'true'

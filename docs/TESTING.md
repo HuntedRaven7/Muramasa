@@ -38,6 +38,6 @@ IMAGE=... ./testsuite/smoke.sh # point at a published image
 ```
 
 `testsuite.yml` runs on PRs, after successful `build` runs on `testing`, and on
-manual dispatch. Both jobs are now required checks on `testing`; on PRs they
-test the last published `:testing` image until the workflow can consume a
-PR-built artifact.
+manual dispatch. Both jobs are required checks on `testing`. The build workflow
+publishes a PR-scoped tag (`:pr-<number>`) so the tests exercise the exact image
+built for that PR rather than the last published stream.

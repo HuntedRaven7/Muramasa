@@ -36,7 +36,7 @@ jobs:
        github.event.workflow_run.event == 'push')
     uses: projectbluefin/testsuite/.github/workflows/e2e.yml@525c6b074ead63e50f0d90b54218d2c344454a5d # v1
     with:
-      image: ${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
+      image: ${{ github.event_name == 'pull_request' && format('ghcr.io/huntedraven7/muramasa:pr-{0}', github.event.number) || github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
       suites: common
       test_ref: v1
       # Muramasa ships a monolithic targeted refpolicy and boots enforcing.
@@ -63,8 +63,8 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
             -u "${{ github.actor }}" --password-stdin
       - name: Pull image
-        run: sudo podman pull "${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}"
+        run: sudo podman pull "${{ github.event_name == 'pull_request' && format('ghcr.io/huntedraven7/muramasa:pr-{0}', github.event.number) || github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}"
       - name: Run Mango smoke checks
         env:
-          IMAGE: ${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
+          IMAGE: ${{ github.event_name == 'pull_request' && format('ghcr.io/huntedraven7/muramasa:pr-{0}', github.event.number) || github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
         run: testsuite/smoke.sh
