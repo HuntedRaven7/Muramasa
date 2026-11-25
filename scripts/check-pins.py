@@ -6,7 +6,9 @@ it can run on the host without BuildStream installed.
 """
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -90,6 +92,21 @@ def main() -> int:
                 continue
             if name not in local_names:
                 fail(f"{element.relative_to(ROOT)} references missing element {name}")
+                errors += 1
+
+    # Stray files inside local-source directories change BuildStream cache
+    # keys. pytest's __pycache__ is the usual culprit.
+    if os.environ.get("ALLOW_STRAY_LOCAL_SOURCES") != "1":
+        stray = subprocess.run(
+            [
+                "git", "ls-files", "--others", "--exclude-standard",
+                "--", "files/", "include/", "elements/", "patches/",
+            ],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        for line in stray.stdout.splitlines():
+            if line.strip():
+                fail(f"stray untracked file in a local source: {line}")
                 errors += 1
 
     if errors:

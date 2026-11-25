@@ -24,6 +24,21 @@ just test-image
 For the NVIDIA flavor use `just flavor-build nvidia`. Build outputs go to
 `.build-out/` and are gitignored.
 
+To avoid a cold local build, seed the BuildStream cache from CI first:
+
+```sh
+just cache-list                    # published archives, sizes and digests
+just bootstrap-cache               # verify, resume and extract the newest partial
+just cache-status                  # how many elements of the final target are cached
+```
+
+`bootstrap-cache` uses an anonymous GHCR pull token, verifies the archive
+SHA-256 against the registry manifest, resumes interrupted downloads and never
+pushes. Set `BST_CACHE_DIR` to seed a non-default cache directory. Stray
+untracked files inside `files/`, `include/`, `elements/` or `patches/` change
+BuildStream local-source keys, so `just test` fails on them; set
+`ALLOW_STRAY_LOCAL_SOURCES=1` only when you know what you are doing.
+
 ## CI pipeline
 
 CI jobs run on `ubuntu-26.04` hosted runners.
