@@ -74,6 +74,24 @@ def main() -> int:
                 fail(f"{element.relative_to(ROOT)} references missing {rel}")
                 errors += 1
 
+    # Static graph checks: every element needs a kind, and every local
+    # dependency must name a file in elements/. These catch the typos that
+    # otherwise only appear after bst has loaded the whole graph.
+    local_names = {str(p.relative_to(ELEMENTS)) for p in ELEMENTS.rglob("*.bst")}
+    for element in ELEMENTS.rglob("*.bst"):
+        text = element.read_text(encoding="utf-8")
+        if not re.search(r"^kind:\s*\S+", text, re.M):
+            fail(f"{element.relative_to(ROOT)} has no kind")
+            errors += 1
+        for name in re.findall(
+            r"^\s*-\s+([A-Za-z0-9_./-]+\.bst)\s*$", text, re.M
+        ):
+            if name.startswith("freedesktop-sdk.bst:") or ":" in name:
+                continue
+            if name not in local_names:
+                fail(f"{element.relative_to(ROOT)} references missing element {name}")
+                errors += 1
+
     if errors:
         print(f"{errors} pin/metadata error(s)", file=sys.stderr)
         return 1

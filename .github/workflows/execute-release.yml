@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   preflight:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       digest: ${{ steps.candidate.outputs.digest }}
       current: ${{ steps.current.outputs.digest }}
@@ -61,7 +61,7 @@ jobs:
   promote:
     needs: preflight
     if: ${{ inputs.dry_run == false }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       packages: write

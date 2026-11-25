@@ -26,9 +26,11 @@ For the NVIDIA flavor use `just flavor-build nvidia`. Build outputs go to
 
 ## CI pipeline
 
+CI jobs run on `ubuntu-26.04` hosted runners.
+
 `.github/workflows/build.yml` runs on pushes and PRs to `testing`:
 
-1. `validate` — pin checks and BuildStream graph
+1. `validate` — pin checks, static element checks and the BuildStream graph
 2. For each flavor (`base`, `nvidia`):
    - restore the GHCR cache (`just cache-pull`)
    - build and export the image
