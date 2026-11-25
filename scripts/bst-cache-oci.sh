@@ -67,6 +67,8 @@ case "$ACTION" in
       --exclude='casserver-*.sock' \
       --exclude='cas/tmp/*' \
       --exclude='cas/staging/*' \
+      --exclude='tmp/*' \
+      --ignore-failed-read \
       --warning=no-file-changed \
       -cf "$CACHE_ARCHIVE" \
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"

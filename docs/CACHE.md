@@ -39,8 +39,10 @@ minutes; a timed-out run hands its completed artifacts to the next attempt.
 The partial tag never claims a build was
 complete. Before archiving, CI stops any leftover `bst2` container so
 BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
-state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*`), which is recreated on
-restore. The archive is written with a relative path because `oras` rejects
+state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`), which is
+recreated on restore. Transient files that disappear mid-read are ignored so
+checkpoints keep succeeding while the build is active. The archive is written
+with a relative path because `oras` rejects
 absolute file paths. The FSDK junction mirrors Dakota's boolean
 `x86_64_v3` conditional so artifact keys match the upstream caches; passing a
 string variable would change every key and force a full rebuild.
