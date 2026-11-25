@@ -41,7 +41,9 @@ complete. Before archiving, CI stops any leftover `bst2` container so
 BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
 state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`), which is
 recreated on restore. Transient files that disappear mid-read are ignored so
-checkpoints keep succeeding while the build is active. The archive is written
+checkpoints keep succeeding while the build is active. Each push logs the
+source size, tar record progress, archive size and destination tag so GHCR
+upload progress is visible in CI. The archive is written
 with a relative path because `oras` rejects
 absolute file paths. The FSDK junction mirrors Dakota's boolean
 `x86_64_v3` conditional so artifact keys match the upstream caches; passing a

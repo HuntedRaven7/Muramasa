@@ -60,6 +60,8 @@ case "$ACTION" in
       exit 0
     fi
     echo "${GH_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+    echo "Cache source: ${CACHE_DIR} ($(du -sh "${CACHE_DIR}" | cut -f1))"
+    echo "Creating ${CACHE_ARCHIVE} ..."
     # Exclude volatile scratch state: the cache-server socket, FUSE mounts and
     # staging directories. These are recreated on restore and can be unreadable
     # or still changing while tar runs.
@@ -70,8 +72,12 @@ case "$ACTION" in
       --exclude='tmp/*' \
       --ignore-failed-read \
       --warning=no-file-changed \
+      --checkpoint=50 \
+      --checkpoint-action=echo='  archived %{r} records' \
       -cf "$CACHE_ARCHIVE" \
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"
+    echo "Archive size: $(du -h "${CACHE_ARCHIVE}" | cut -f1)"
+    echo "Pushing ${CACHE_ARCHIVE} to ${BST_CACHE_REF}:${key} ..."
     oras push "${BST_CACHE_REF}:${key}" \
       "${CACHE_ARCHIVE}:application/vnd.muramasa.bst-cache.v1.tar.zst"
     rm -f "$CACHE_ARCHIVE"
