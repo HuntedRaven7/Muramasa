@@ -37,7 +37,8 @@ just e2e                       # local Mango smoke against a local image
 IMAGE=... ./testsuite/smoke.sh # point at a published image
 ```
 
-`testsuite.yml` runs on PRs, after successful `build` runs on `testing`, and on
-manual dispatch. Both jobs are required checks on `testing`. The build workflow
-publishes a PR-scoped tag (`:pr-<number>`) so the tests exercise the exact image
-built for that PR rather than the last published stream.
+`testsuite.yml` runs after successful `build` runs on `testing`, and on manual
+dispatch. It is a post-merge gate rather than a PR check: a PR build takes hours,
+so waiting for its image inside a PR check is impractical. A protected branch
+requires only the fast checks (`validate`, both image jobs, pre-commit, CodeQL
+and Scorecard); the testsuite guards promotion instead.
