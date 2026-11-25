@@ -26,6 +26,9 @@ permissions: {}
 jobs:
   upstream-common:
     name: Shared common suite
+    permissions:
+      contents: read
+      packages: write
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'pull_request' ||
