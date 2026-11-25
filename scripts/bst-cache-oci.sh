@@ -1,24 +1,18 @@
 #!/usr/bin/env bash
-# Move the local BuildStream cache to/from a GHCR OCI artifact.
+# Move the local BuildStream CAS to/from a GHCR OCI artifact.
 #
-# GitHub Actions cache has a 10 GB per-repository cap and evicts aggressively;
-# an FSDK cache is many GB. GHCR artifacts are free and uncapped for public
-# projects, so the cache travels as an OCI artifact attached to
-# ghcr.io/huntedraven7/muramasa-cache.
-#
-# Two keys are used:
+# Keys:
 #   BST_CACHE_KEY          complete, graph-keyed cache from a successful build
-#   BST_CACHE_FALLBACK_KEY rolling "partial" cache from failed/timed-out builds
+#   BST_CACHE_FALLBACK_KEY immutable snapshot for this run/attempt (partial)
+#   BST_CACHE_LATEST_KEY   rolling pointer to the newest partial snapshot
 #
-# A failed build must never be advertised as complete, but its artifacts are
-# still valid and make the next attempt much faster. Pull tries the complete
-# key first, then the rolling partial key. Push uses the complete key on
-# success and the partial key otherwise.
+# Sources live in GitHub Actions cache, not in the CAS archive. A failed build
+# never publishes a complete key; it publishes an immutable snapshot plus the
+# rolling pointer. Pull tries exact, newest partial, then this run's snapshot.
 set -euo pipefail
 
 CACHE_DIR="${HOME}/.cache/buildstream"
-# oras rejects absolute file paths unless --disable-path-validation is used.
-# Keep the archive relative to the working directory (the CI workspace).
+# oras rejects absolute file paths, so keep the archive relative to the workspace.
 CACHE_ARCHIVE="buildstream-cache.tar.zst"
 ACTION="${1:-}"
 
@@ -28,6 +22,7 @@ case "$ACTION" in
   pull)
     keys=()
     [ -n "${BST_CACHE_KEY:-}" ] && keys+=("$BST_CACHE_KEY")
+    [ -n "${BST_CACHE_LATEST_KEY:-}" ] && keys+=("$BST_CACHE_LATEST_KEY")
     [ -n "${BST_CACHE_FALLBACK_KEY:-}" ] && keys+=("$BST_CACHE_FALLBACK_KEY")
     if [ "${#keys[@]}" -eq 0 ]; then
       echo "No cache keys configured; starting cold"
@@ -50,22 +45,34 @@ case "$ACTION" in
     ;;
 
   push)
-    key="${BST_CACHE_KEY:-${BST_CACHE_FALLBACK_KEY:-}}"
-    if [ -z "$key" ]; then
-      echo "No cache key configured; skipping cache push"
-      exit 0
-    fi
     if [ ! -d "$CACHE_DIR" ]; then
       echo "No local cache to push" >&2
       exit 0
     fi
+    available_kb=$(df -Pk . | awk 'NR==2 {print $4}')
+    if [ "${available_kb:-0}" -lt 1048576 ]; then
+      echo "Less than 1 GiB free; skipping cache push" >&2
+      exit 0
+    fi
+
+    if [ -n "${BST_CACHE_KEY:-}" ]; then
+      keys=("$BST_CACHE_KEY")
+    else
+      keys=()
+      [ -n "${BST_CACHE_FALLBACK_KEY:-}" ] && keys+=("$BST_CACHE_FALLBACK_KEY")
+      [ -n "${BST_CACHE_LATEST_KEY:-}" ] && keys+=("$BST_CACHE_LATEST_KEY")
+    fi
+    if [ "${#keys[@]}" -eq 0 ]; then
+      echo "No cache key configured; skipping cache push"
+      exit 0
+    fi
+
     echo "${GH_TOKEN}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
     echo "Cache source: ${CACHE_DIR} ($(du -sh "${CACHE_DIR}" | cut -f1))"
     echo "Creating ${CACHE_ARCHIVE} ..."
-    # Exclude volatile scratch state: the cache-server socket, FUSE mounts and
-    # staging directories. These are recreated on restore and can be unreadable
-    # or still changing while tar runs.
+    # Exclude sources (cached separately), daemon sockets and volatile scratch.
     tar --use-compress-program=zstd \
+      --exclude='sources/*' \
       --exclude='casserver-*.sock' \
       --exclude='cas/tmp/*' \
       --exclude='cas/staging/*' \
@@ -77,11 +84,13 @@ case "$ACTION" in
       -cf "$CACHE_ARCHIVE" \
       -C "$(dirname "$CACHE_DIR")" "$(basename "$CACHE_DIR")"
     echo "Archive size: $(du -h "${CACHE_ARCHIVE}" | cut -f1)"
-    echo "Pushing ${CACHE_ARCHIVE} to ${BST_CACHE_REF}:${key} ..."
-    oras push "${BST_CACHE_REF}:${key}" \
-      "${CACHE_ARCHIVE}:application/vnd.muramasa.bst-cache.v1.tar.zst"
+    for key in "${keys[@]}"; do
+      echo "Pushing ${CACHE_ARCHIVE} to ${BST_CACHE_REF}:${key} ..."
+      oras push "${BST_CACHE_REF}:${key}" \
+        "${CACHE_ARCHIVE}:application/vnd.muramasa.bst-cache.v1.tar.zst"
+      echo "Pushed cache as ${key}"
+    done
     rm -f "$CACHE_ARCHIVE"
-    echo "Pushed cache as ${key}"
     ;;
 
   *)

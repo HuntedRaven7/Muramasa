@@ -28,26 +28,29 @@ directory as an OCI artifact.
 
 ## Key scheme
 
-`BST_CACHE_KEY` is derived from `project.conf`, `include/versions.yml`, and
-`elements/freedesktop-sdk.bst` and is written only by a successful build.
-Failed or timed-out builds write `BST_CACHE_FALLBACK_KEY`, a rolling
-`-partial` tag. Pull tries the complete key first and falls back to the
-partial tag, so a long source build accumulates artifacts across attempts
-instead of starting cold each time. Because a full FSDK bootstrap exceeds a
-single 6-hour job, the build step also checkpoints the partial cache every 5
-minutes; a timed-out run hands its completed artifacts to the next attempt.
-The partial tag never claims a build was
-complete. Before archiving, CI stops any leftover `bst2` container so
-BuildStream cannot mutate files mid-tar. The archive excludes volatile scratch
-state (`casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`), which is
-recreated on restore. Transient files that disappear mid-read are ignored so
-checkpoints keep succeeding while the build is active. Each push logs the
-source size, tar record progress, archive size and destination tag so GHCR
-upload progress is visible in CI. The archive is written
-with a relative path because `oras` rejects
-absolute file paths. The FSDK junction mirrors Dakota's boolean
-`x86_64_v3` conditional so artifact keys match the upstream caches; passing a
-string variable would change every key and force a full rebuild.
+`BST_CACHE_KEY` is derived from the graph definitions and is written only by a
+successful build. Incomplete builds publish two other tags:
+`BST_CACHE_FALLBACK_KEY`, an immutable snapshot named for the run and attempt,
+and `BST_CACHE_LATEST_KEY`, a rolling pointer to the newest snapshot. Pull
+tries the exact key, then the rolling pointer, then this run's snapshot, so a
+long build converges across attempts without a partial cache ever claiming to
+be complete.
+
+The build has a 270-minute soft budget inside the 360-minute job limit. A
+`timeout` exit of 124 is treated as a checkpoint: the normal cache-save step
+still runs, and image export/signing steps are skipped for that attempt. The
+build also checkpoints every 5 minutes and uses `--on-error quit`. Sources are
+kept in a separate GitHub Actions cache and excluded from the GHCR CAS archive.
+
+Before archiving, CI stops any leftover `bst2` container and checks that at
+least 1 GiB of disk is free. The archive excludes volatile scratch state
+(`sources/*`, `casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`),
+which is recreated on restore. Transient files that disappear mid-read are
+ignored. Each push logs the source size, tar record progress, archive size and
+destination tag. The archive uses a relative path because `oras` rejects
+absolute paths. The FSDK junction mirrors Dakota's boolean `x86_64_v3`
+conditional so artifact keys match the upstream caches; passing a string
+variable would change every key and force a full rebuild.
 Plugin junctions are pinned to Dakota's versions (`buildstream-plugins` 2.8.0
 and `buildstream-plugins-community` 2.4.0) so GBM's plugin declarations resolve
 with matching keys. `cache-clean.yml` prunes old cache tags.
