@@ -39,8 +39,9 @@ be complete.
 The build has a 270-minute soft budget inside the 360-minute job limit. A
 `timeout` exit of 124 is treated as a checkpoint: the normal cache-save step
 still runs, and image export/signing steps are skipped for that attempt. The
-build also checkpoints every 5 minutes and uses `--on-error quit`. Sources are
-kept in a separate GitHub Actions cache and excluded from the GHCR CAS archive.
+build uses `--on-error quit`. There is no mid-build archive: writing a large
+tar while GCC fills the CAS exhausted runner disk. Sources are kept in a
+separate GitHub Actions cache and excluded from the GHCR CAS archive.
 
 Before archiving, CI stops any leftover `bst2` container and checks that at
 least 1 GiB of disk is free. The archive excludes volatile scratch state

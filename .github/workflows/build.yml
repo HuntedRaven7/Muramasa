@@ -125,18 +125,9 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
           SIGN_ARGS=""
-          # The FSDK bootstrap exceeds a single 6h job on a cold cache. Push
-          # the rolling partial cache every 5 minutes while the build runs so
-          # the next attempt can resume from completed artifacts.
-          (
-            while true; do
-              sleep 300
-              echo "--- checkpointing partial BuildStream cache ---"
-              BST_CACHE_KEY= scripts/bst-cache-oci.sh push || echo "checkpoint failed, will retry"
-            done
-          ) &
-          CACHE_SAVER_PID=$!
-          trap 'kill "${CACHE_SAVER_PID}" 2>/dev/null || true' EXIT
+          # Checkpointing is handled by the 270-minute soft budget below and
+          # the final cache-save step. Archiving during compilation exhausted
+          # runner disk while GCC was writing to the CAS.
 
           if [ "${BUILD_SIGNING:-false}" = "true" ]; then
             SIGN_ARGS="-o secure_boot_signing true"
