@@ -18,6 +18,32 @@ ACTION="${1:-}"
 
 : "${BST_CACHE_REF:?BST_CACHE_REF must be set}"
 
+restore_cache() {
+  local key="$1"
+  local archive_path="${CACHE_DIR}/${CACHE_ARCHIVE}"
+
+  echo "Pulling ${BST_CACHE_REF}:${key}"
+  if ! oras pull "${BST_CACHE_REF}:${key}" --output "$CACHE_DIR" 2>/dev/null; then
+    echo "No cache for key ${key}; trying next" >&2
+    return 1
+  fi
+
+  # oras writes named artifact files; it never unpacks tar layers. The archive
+  # was created with a top-level buildstream/ directory, so unpack it one level
+  # above CACHE_DIR to recreate the original layout. Without this step every
+  # build starts with an empty CAS and takes hours instead of minutes.
+  if [ ! -f "$archive_path" ]; then
+    echo "Cache artifact ${key} is missing ${CACHE_ARCHIVE}; trying next" >&2
+    return 1
+  fi
+  if ! tar --use-compress-program=zstd -xf "$archive_path" -C "$(dirname "$CACHE_DIR")"; then
+    echo "Failed to unpack cache artifact ${key}; trying next" >&2
+    return 1
+  fi
+  rm -f "$archive_path"
+  echo "Restored cache from ${key}"
+}
+
 case "$ACTION" in
   pull)
     keys=()
@@ -31,13 +57,10 @@ case "$ACTION" in
     mkdir -p "$CACHE_DIR"
     restored=0
     for key in "${keys[@]}"; do
-      echo "Pulling ${BST_CACHE_REF}:${key}"
-      if oras pull "${BST_CACHE_REF}:${key}" --output "$CACHE_DIR" 2>/dev/null; then
-        echo "Restored cache from ${key}"
+      if restore_cache "$key"; then
         restored=1
         break
       fi
-      echo "No cache for key ${key}; trying next" >&2
     done
     if [ "$restored" -eq 0 ]; then
       echo "No usable cache found; starting cold" >&2

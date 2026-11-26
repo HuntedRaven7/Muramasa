@@ -24,7 +24,10 @@ being available and honest about their cache contents; the pin set in
 GitHub Actions cache has a 10 GB per-repository cap. A full FSDK cache is much
 larger and gets evicted, which makes every CI run cold. GHCR artifacts are free
 and uncapped for public projects, so `scripts/bst-cache-oci.sh` moves the cache
-directory as an OCI artifact.
+directory as an OCI artifact. `oras` writes pushed layers as named files and
+does not unpack tar layers, so the pull path explicitly unpacks the
+`buildstream-cache.tar.zst` artifact into the cache directory. Without that
+step the CAS stays empty and every build starts from scratch.
 
 ## Key scheme
 
