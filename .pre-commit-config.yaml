@@ -2,8 +2,11 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      # Patches are verbatim upstream data; reformatting breaks their context.
       - id: trailing-whitespace
+        exclude: ^patches/
       - id: end-of-file-fixer
+        exclude: ^patches/
       - id: check-yaml
         args: [--allow-multiple-documents]
       - id: check-json
@@ -14,7 +17,6 @@ repos:
     rev: v0.14.2
     hooks:
       - id: ruff
-        args: [--check]
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.10.0
     hooks:

@@ -6,7 +6,9 @@ it can run on the host without BuildStream installed.
 """
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -72,6 +74,39 @@ def main() -> int:
         for rel in re.findall(r"path:\s*(files/[^\s]+)", text):
             if not (ROOT / rel).exists():
                 fail(f"{element.relative_to(ROOT)} references missing {rel}")
+                errors += 1
+
+    # Static graph checks: every element needs a kind, and every local
+    # dependency must name a file in elements/. These catch the typos that
+    # otherwise only appear after bst has loaded the whole graph.
+    local_names = {str(p.relative_to(ELEMENTS)) for p in ELEMENTS.rglob("*.bst")}
+    for element in ELEMENTS.rglob("*.bst"):
+        text = element.read_text(encoding="utf-8")
+        if not re.search(r"^kind:\s*\S+", text, re.M):
+            fail(f"{element.relative_to(ROOT)} has no kind")
+            errors += 1
+        for name in re.findall(
+            r"^\s*-\s+([A-Za-z0-9_./-]+\.bst)\s*$", text, re.M
+        ):
+            if name.startswith("freedesktop-sdk.bst:") or ":" in name:
+                continue
+            if name not in local_names:
+                fail(f"{element.relative_to(ROOT)} references missing element {name}")
+                errors += 1
+
+    # Stray files inside local-source directories change BuildStream cache
+    # keys. pytest's __pycache__ is the usual culprit.
+    if os.environ.get("ALLOW_STRAY_LOCAL_SOURCES") != "1":
+        stray = subprocess.run(
+            [
+                "git", "ls-files", "--others", "--exclude-standard",
+                "--", "files/", "include/", "elements/", "patches/",
+            ],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        for line in stray.stdout.splitlines():
+            if line.strip():
+                fail(f"stray untracked file in a local source: {line}")
                 errors += 1
 
     if errors:

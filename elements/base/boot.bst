@@ -36,6 +36,8 @@ config:
       'systemd.show_status=auto' \
       'quiet' \
       'splash' \
+      'security=selinux' \
+      'enforcing=1' \
       > /tmp/muramasa.cmdline
 
     # The kernel command line is embedded in the UKI. bootc install will

@@ -6,6 +6,7 @@ sbom_out/
 *.tar
 *.tar.zst
 image-diff.md
+files/boot-keys/private/
 __pycache__/
 *.py[cod]
 .venv/

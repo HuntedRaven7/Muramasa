@@ -17,7 +17,7 @@ bst *ARGS:
       -v "{{justfile_directory()}}:/src:rw" \
       -v "${HOME}/.cache/buildstream:/root/.cache/buildstream:rw" \
       -w /src "{{bst2_image}}" \
-      bash -c 'bst --colors "$@"' -- --no-interactive {{ARGS}}
+      bash -c 'git config --global --add safe.directory "*" && bst --colors "$@"' -- --no-interactive {{ARGS}}
 
 # Flavor-aware shortcut: `just flavor-build nvidia` builds -o nvidia true.
 flavor-build flavor="base":
@@ -32,6 +32,19 @@ flavor-build flavor="base":
 cache-pull:
     scripts/bst-cache-oci.sh pull
 
+# List published cache archives in GHCR.
+cache-list:
+    python3 scripts/bst-local-cache.py list
+
+# Seed the local cache from a published archive (default: newest partial).
+bootstrap-cache tag="bst-Linux-base-partial":
+    python3 scripts/bst-local-cache.py bootstrap "{{tag}}"
+
+# Show how many elements of a target are already in the local cache.
+cache-status target="oci/muramasa.bst":
+    just bst show --deps all --format '%{name}||%{state}' "{{target}}" \
+      | python3 scripts/bst-local-cache.py states
+
 cache-push:
     scripts/bst-cache-oci.sh push
 
@@ -41,7 +54,7 @@ validate:
     just bst show oci/muramasa.bst
 
 check-pins:
-    python3 scripts/check-pins.py
+    PYTHONDONTWRITEBYTECODE=1 python3 scripts/check-pins.py
 
 bst-build:
     just bst build oci/muramasa.bst
@@ -79,7 +92,7 @@ lint:
 
 # Static checks that do not require the built image.
 test: check-pins
-    python3 -m compileall -q scripts tests
+    PYTHONDONTWRITEBYTECODE=1 python3 -m compileall -q scripts tests
 
 # Full image content assertions (requires a built image).
 test-image image="{{image_name}}:{{image_tag}}":
@@ -130,6 +143,14 @@ release *ARGS:
 clean:
     rm -rf .build-out sbom_out
     {{podman}} rmi "{{image_name}}:{{image_tag}}" || true
+
+# Run Mango smoke checks against an exported image.
+e2e image="{{registry}}/muramasa:testing":
+    IMAGE="{{image}}" PODMAN="{{podman}}" ./testsuite/smoke.sh
+
+# Generate the development Secure Boot keypair (private key is gitignored).
+keys:
+    ./scripts/gen-dev-keys.sh
 
 # Apply branch protection rules (needs ADMIN_TOKEN or GH_TOKEN with admin rights).
 protect:

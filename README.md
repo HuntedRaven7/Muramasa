@@ -4,19 +4,23 @@ A Bootc Image Of Myth — an FSDK-based, Wayland-compositor desktop built around
 [Mango](https://github.com/mangowm/mango).
 
 Muramasa takes the BuildStream approach of Bluefin Dakota and replaces the GNOME
-desktop with a compositor-first stack. It is assembled entirely from source with
-[freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/), and reuses the GNOME
-and Bluefin artifact caches because they are FSDK-based too.
+desktop with a compositor-first stack. It is assembled from pinned source builds
+with [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/), except for a
+few deliberate prebuilt inputs: Voxtype's signed binary, Valve's pinned Steam
+launcher `.deb`, the pinned Zig toolchain, and Homebrew tarballs. It reuses the
+GNOME and Bluefin artifact caches because they are FSDK-based too.
 
 > The shell layer is intentionally not configured in this repository.
-> Quickshell v0.3.2 is installed as a binary; its configuration is supplied by
-> the image owner after installation. There is deliberately no wallpaper manager
-> in the base image.
+> Quickshell v0.3.2 is built from the signed upstream tag and installed as a
+> binary only; its configuration is supplied by the image owner after
+> installation. There is deliberately no wallpaper manager in the base image.
 
 ## What ships
 
 - **Compositor:** Mango, pinned to a reviewed upstream commit
-- **Shell runtime:** Quickshell v0.3.2, built from the signed upstream tag
+- **Login:** Ly display manager with a Tokyo Night (night) themed login screen
+- **Shell runtime:** Quickshell v0.3.2, built from the signed upstream tag as a
+  binary with no shell configuration
 - **WC tooling:** rofi, wl-clipboard, wtype, mako, swayosd, playerctl, grim +
   slurp, PipeWire/WirePlumber, portals, polkit, GNOME Keyring
 - **Applications:** kitty, Nautilus, Voxtype (signed prebuilt AVX2/CPU binary)
@@ -24,12 +28,17 @@ and Bluefin artifact caches because they are FSDK-based too.
   x86-64-v3 builds on x86_64
 - **Container tooling:** Homebrew (Dakota-style) with Docker available through
   `ujust install-docker`; podman remains available for daemonless workflows
+- **Application store:** Flatpark remote plus Bazaar preinstalled on first boot
 - **Gaming:** gamescope and native Steam from Valve's pinned launcher `.deb`
   (with Dakota's full 32-bit compatibility stack), plus NVIDIA and non-NVIDIA
   image flavors from a single source tree
 - **Agent-focused defaults:** `AGENTS.md`, task skills and `ujust` automation
 - **PR-only workflow:** protected `testing` (primary) and `stable` (promotion)
   branches, required CI checks, squash merges and linear history
+- **Docs are part of every change:** see [AGENTS.md](AGENTS.md) and the
+  [documentation index](docs/README.md)
+- **Approved vision:** [STRATEGY.md](STRATEGY.md) defines what this image accepts
+  and resists
 
 ## Image streams
 

@@ -8,8 +8,8 @@ variables:
   # --- Toolchain ------------------------------------------------------------
   fsdk-ref: "freedesktop-sdk-26.08.4-0-g114ae909ec9881958bd507c8b4414aa33f758d2b"
   bst-sbom-ref: "0706fec3bedf6f73bd9d2fed32c2aed585feef8d"
-  buildstream-plugins-ref: "2.5.0-0-g79649529cffb695d0d22195ed9a4910c80ca6907"
-  buildstream-plugins-community-ref: "85c2bae9d3a1eb3121c9674f68ef6e87211fddb9c930f3e5057b9a1e66eb41d9"
+  buildstream-plugins-ref: "2.8.0-0-g2681232038711d5c3d4ef1ecc962321c33ec72c1"
+  buildstream-plugins-community-ref: "6101ba093ed9a3c27f9faeefbcf08742b4c1e248e08c401df938bbeacbea0744"
 
   # --- Compositor and shell -------------------------------------------------
   # Mango: pinned to the reviewed main-branch commit (2026-11-21).
@@ -24,6 +24,56 @@ variables:
   # that FSDK does not carry are pinned here.
   kitty-ref: "6946bd317e41dd7c43517425f74f09da6aa86350"
   nautilus-ref: "cdce9fcaacfc4240bd0f9b302bef6f48046aec13"
+  # FSDK 26.08 does not carry these WC tools; build them from pinned sources.
+  rofi-ref: "9b0363ca542ff0d63e46093eb33bfd0053933b96"
+  wl-clipboard-ref: "5ec4f89937614abe70f49f93c79b0d97716487fd"
+  wtype-ref: "4b9cc29664f178cf380ccfe7f98405d38dffda3c"
+  mako-ref: "d87aa6fe266f76248784eb024db9ae8584ea4a86"
+  swayosd-ref: "42f4a3190f0449042db00d1cbb39b8b626d63c7b"
+  playerctl-ref: "b19a71cb9dba635df68d271bd2b3f6a99336a223"
+  grim-ref: "47e2658619c6b5a790732c5876fb84e8273f08a9"
+  slurp-ref: "a3998d3ec79fbd85b81911f43010466b032ed0d9"
+  xdg-desktop-portal-wlr-ref: "8388b8a6214470462146840e92909aff5983eeac"
+  gtk4-ref: "e963b237dbea5e485fdf2b2594a17b574dac5f83"
+  libadwaita-ref: "39fff6661b28cce7b332ad5692b4efb21967d50d"
+  # Nautilus dependency closure absent from FSDK 26.08.
+  glycin-ref: "e2ea3b32a8dcadfe25795971c34d164804e6f998"
+  gnome-autoar-ref: "ed5ac29babba0dec00d9de3e826bb48706bcbd76"
+  gnome-desktop-ref: "608f2ace84c2668b174d9993d370959fa0a1ab21"
+  libgxdp-ref: "744da20986d9eb766ca494d1729d4d64f8913e46"
+  libportal-ref: "dbeb2ba5bdb0ef369980a29070be5d9ccb71eaaa"
+  tinysparql-ref: "1fd41022c9816e85d68b2ecccfb225a5b17781df"
+  blueprint-compiler-ref: "f7198c52f7238d6afd7bb7db6b3c370d07e06756"
+  # Vendored Zig dependency for Ly (build sandbox has no network).
+  zig-clap-ref: "05faf3905e8548f5cc269a8836e154065e70128d"
+
+  # --- Compositor and shell dependencies absent from FSDK ------------------
+  cjson-ref: "6d9f2443ab071f86e5d9b43025a40929ec41c46c"
+  wlroots-ref: "d783533489e1f75d6886c2ab5c5960090ef268f8"
+  scenefx-ref: "37ccd723bef49e6891156ffafce8f549f01446cc"
+  qt6-version: "6.11.3"
+  qt6-base-ref: "138f955f0b5e50e4a6c2ee1e78a2279db52ae9e3"
+  qt6-declarative-ref: "95e4ceccb77c82411f8a048eda4360e5967f4e60"
+  qt6-svg-ref: "f5d99721911e4a1989965a087813cf1277519bc6"
+  qt6-wayland-ref: "b4295e92018e1ad042c3715b8743c2ef8f643d79"
+
+  # --- Display manager -----------------------------------------------------
+  ly-ref: "747955ce3b654039c2aab9c2dbc089c26b07953c"
+  zig-version: "0.17.0"
+  zig-amd64-sha256: "1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026"
+  zig-arm64-sha256: "9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8"
+
+  # --- Firewall / system services ------------------------------------------
+  firewalld-ref: "5736c0b77abdf748e59b20a1cb4fbd7382cd2f7f"
+  intltool-sha256: "36cd8fe249d0cc20918b6d4583267208bf74c8d541c67a5fe63316846344f9f7"
+
+  # --- NVIDIA --------------------------------------------------------------
+  nvidia-version: "615.78.08"
+  nvidia-run-sha256: "3e3f6dddc2ee767a08185300af7be3cb286ece76698d2dde3524599782d07ffe"
+
+  # --- SELinux -------------------------------------------------------------
+  selinux-tools-ref: "f0736c7ed19f4cfe31bcd17b356da9244974ca9d"
+  refpolicy-ref: "c89bd1537a63c4a332945897fa34bed81f2921a3"
 
   # --- Gaming ---------------------------------------------------------------
   ogc-localversion: "-ogc1"

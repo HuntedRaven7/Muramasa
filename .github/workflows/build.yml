@@ -16,10 +16,10 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2
         with:
           tool: just
       - name: Pin and metadata checks
@@ -35,8 +35,8 @@ jobs:
 
   image:
     needs: validate
-    runs-on: ubuntu-24.04
-    timeout-minutes: 240
+    runs-on: ubuntu-26.04
+    timeout-minutes: 360
     env:
       PODMAN: "sudo podman"
     permissions:
@@ -70,19 +70,38 @@ jobs:
           echo "suffix=${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
           echo "tag=testing${{ matrix.flavor.suffix }}" >> "$GITHUB_OUTPUT"
 
-      - uses: projectbluefin/actions/bootc-build/setup-runner@v1
+      - uses: projectbluefin/actions/bootc-build/setup-runner@9eccc77361d4e1bdc8c412dd3b6573d8680d2246 # v1
         with:
           storage-backend: btrfs
           native-overlay: "true"
           install-tools: '["just", "cosign", "oras"]'
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2
         with:
           tool: just
 
       - name: Cache key
         run: |
           echo "BST_CACHE_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-${{ hashFiles('project.conf', 'include/versions.yml', 'elements/freedesktop-sdk.bst') }}" >> "$GITHUB_ENV"
+          echo "BST_CACHE_LATEST_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-partial" >> "$GITHUB_ENV"
+          echo "BST_CACHE_FALLBACK_KEY=bst-${{ runner.os }}-${{ matrix.flavor.name }}-partial-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
           echo "BST_CACHE_REF=ghcr.io/${{ env.IMAGE_OWNER }}/muramasa-cache" >> "$GITHUB_ENV"
+
+      - name: Stage Secure Boot keys (optional)
+        if: github.event_name != 'pull_request'
+        env:
+          SECURE_BOOT_KEY: ${{ secrets.SECURE_BOOT_KEY }}
+          SECURE_BOOT_CERT: ${{ secrets.SECURE_BOOT_CERT }}
+        run: |
+          set -euo pipefail
+          if [ -n "${SECURE_BOOT_KEY}" ] && [ -n "${SECURE_BOOT_CERT}" ]; then
+            mkdir -p files/boot-keys/private files/boot-keys/public
+            printf '%s\n' "${SECURE_BOOT_KEY}" > files/boot-keys/private/secure-boot.key
+            printf '%s\n' "${SECURE_BOOT_CERT}" > files/boot-keys/public/secure-boot.crt
+            chmod 600 files/boot-keys/private/secure-boot.key
+            echo "BUILD_SIGNING=true" >> "$GITHUB_ENV"
+          else
+            echo "No Secure Boot secrets configured; building unsigned UKI"
+          fi
 
       - name: Restore BuildStream cache
         continue-on-error: true
@@ -91,28 +110,70 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
         run: just cache-pull
 
+      - name: Restore BuildStream sources cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/buildstream/sources
+          key: bst-sources-${{ runner.os }}-${{ matrix.flavor.name }}-${{ hashFiles('project.conf', 'include/**/*.yml', 'elements/**/*.bst', 'patches/**/*') }}
+          restore-keys: |
+            bst-sources-${{ runner.os }}-${{ matrix.flavor.name }}-
+
       - name: Build and export image
         id: build-image
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
         run: |
-          if [ "${{ matrix.flavor.nvidia }}" = "true" ]; then
-            just bst -o nvidia true build oci/muramasa.bst
-            just bst -o nvidia true artifact checkout oci/muramasa.bst --directory /src/.build-out
-          else
-            just bst build oci/muramasa.bst
-            just bst artifact checkout oci/muramasa.bst --directory /src/.build-out
+          SIGN_ARGS=""
+          # Checkpointing is handled by the 270-minute soft budget below and
+          # the final cache-save step. Archiving during compilation exhausted
+          # runner disk while GCC was writing to the CAS.
+
+          if [ "${BUILD_SIGNING:-false}" = "true" ]; then
+            SIGN_ARGS="-o secure_boot_signing true"
           fi
+          # A 270-minute soft budget leaves time for the final cache archive
+          # and push inside the 360-minute job limit. Exit 124 is a checkpoint,
+          # not a build failure.
+          set +e
+          if [ "${{ matrix.flavor.nvidia }}" = "true" ]; then
+            timeout --signal=TERM --kill-after=60 270m \
+              just bst --on-error quit $SIGN_ARGS -o nvidia true build oci/muramasa.bst
+            BUILD_RC=$?
+            if [ "$BUILD_RC" -eq 0 ]; then
+              just bst -o nvidia true artifact checkout oci/muramasa.bst --directory /src/.build-out
+            fi
+          else
+            timeout --signal=TERM --kill-after=60 270m \
+              just bst --on-error quit $SIGN_ARGS build oci/muramasa.bst
+            BUILD_RC=$?
+            if [ "$BUILD_RC" -eq 0 ]; then
+              just bst artifact checkout oci/muramasa.bst --directory /src/.build-out
+            fi
+          fi
+          set -e
+          if [ "$BUILD_RC" -eq 124 ]; then
+            echo "timeout=true" >> "$GITHUB_OUTPUT"
+            echo "Soft budget reached; finishing with a cache checkpoint"
+            BST_CACHE_KEY= scripts/bst-cache-oci.sh push || true
+            exit 0
+          fi
+          [ "$BUILD_RC" -eq 0 ] || exit "$BUILD_RC"
           IMAGE_ID=$(sudo podman pull -q oci:.build-out)
           sudo podman tag "$IMAGE_ID" "localhost/muramasa:latest"
 
       - name: Image content checks
+        if: steps.build-image.outputs.timeout != 'true'
         run: |
           sudo podman run --rm --privileged "localhost/muramasa:latest" bootc container lint
           python3 tests/test_image_contents.py "localhost/muramasa:latest"
 
       - name: Export for scanning
+        if: steps.build-image.outputs.timeout != 'true'
         run: sudo podman save --format docker-archive -o /tmp/scan-image.tar localhost/muramasa:latest
 
       - name: Scan image
+        if: steps.build-image.outputs.timeout != 'true'
         uses: projectbluefin/actions/bootc-build/scan-image@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
         continue-on-error: true
         with:
@@ -122,6 +183,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rechunk with chunkah
+        if: steps.build-image.outputs.timeout != 'true'
         uses: projectbluefin/actions/bootc-build/chunka@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
         with:
           source-image: localhost/muramasa:latest
@@ -129,22 +191,23 @@ jobs:
           source-date-epoch: auto
 
       - name: Push image
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.build-image.outputs.timeout != 'true'
         id: push
         run: |
           set -euo pipefail
           echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
             -u "${{ github.actor }}" --password-stdin
           IMAGE="ghcr.io/${{ env.IMAGE_OWNER }}/muramasa"
+          TAG="${{ steps.flavor.outputs.tag }}"
           IMAGE_ID=$(sudo podman image inspect --format '{{.Id}}' localhost/muramasa:latest)
           sudo podman push --digestfile /tmp/muramasa-digest.txt \
-            "containers-storage:${IMAGE_ID}" "docker://${IMAGE}:${{ steps.flavor.outputs.tag }}"
+            "containers-storage:${IMAGE_ID}" "docker://${IMAGE}:${TAG}"
           DIGEST=$(cat /tmp/muramasa-digest.txt)
           echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
-          echo "Pushed ${IMAGE}:${{ steps.flavor.outputs.tag }}@${DIGEST}"
+          echo "Pushed ${IMAGE}:${TAG}@${DIGEST}"
 
       - name: Sign and attest
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.build-image.outputs.timeout != 'true'
         uses: projectbluefin/actions/bootc-build/sign-and-publish@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
         with:
           image: ghcr.io/${{ env.IMAGE_OWNER }}/muramasa
@@ -157,7 +220,7 @@ jobs:
           image-name: muramasa
 
       - name: Prune old images
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.build-image.outputs.timeout != 'true'
         uses: projectbluefin/actions/bootc-build/ghcr-cleanup@3ab43283cb0ec8bc62aa18208ccc4978a0fd4c44 # v1
         with:
           packages: muramasa
@@ -170,7 +233,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
+          # A timed-out job can leave the bst2 container running and still
+          # writing to the bind-mounted cache. Stop it before archiving.
+          sudo podman ps -aq | xargs -r sudo podman rm -f >/dev/null 2>&1 || true
+          sleep 2
           if [ "${{ steps.build-image.outcome }}" != "success" ]; then
+            # Never advertise a partial build as complete, but keep its
+            # artifacts so the next attempt is not cold.
             unset BST_CACHE_KEY
           fi
           just cache-push

@@ -1,0 +1,3 @@
+# Muramasa SELinux configuration.
+SELINUX=enforcing
+SELINUXTYPE=targeted

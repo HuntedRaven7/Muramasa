@@ -15,7 +15,7 @@ build-depends:
 - freedesktop-sdk.bst:bootstrap/bash.bst
 - freedesktop-sdk.bst:bootstrap/binutils.bst
 - freedesktop-sdk.bst:components/tar.bst
-- freedesktop-sdk.bst:components/xz.bst
+- freedesktop-sdk.bst:bootstrap/xz.bst
 
 variables:
   strip-binaries: ''

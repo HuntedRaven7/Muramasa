@@ -21,7 +21,7 @@ build-depends:
 - freedesktop-sdk.bst:bootstrap/binutils.bst
 - freedesktop-sdk.bst:bootstrap/coreutils.bst
 - freedesktop-sdk.bst:components/tar.bst
-- freedesktop-sdk.bst:components/xz.bst
+- freedesktop-sdk.bst:bootstrap/xz.bst
 - freedesktop-sdk.bst:components/python3.bst
 
 depends:
@@ -30,7 +30,7 @@ depends:
 - freedesktop-sdk.bst:components/python3.bst
 - freedesktop-sdk.bst:components/diffutils.bst
 - freedesktop-sdk.bst:components/tar.bst
-- freedesktop-sdk.bst:components/xz.bst
+- freedesktop-sdk.bst:bootstrap/xz.bst
 - freedesktop-sdk.bst:cross-compilers/standard-libs-i686.bst
 - gaming/steam-libs-i686.bst
 - freedesktop-sdk.bst:components/vulkan-icd-loader.bst

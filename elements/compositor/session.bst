@@ -9,6 +9,7 @@ depends:
 - compositor/mango.bst
 - compositor/quickshell.bst
 - tooling/wc-tools.bst
+- tooling/core-utils.bst
 - tooling/brew.bst
 - tooling/brew-tarball.bst
 - tooling/docker.bst
@@ -16,6 +17,9 @@ depends:
 - agent/agent.bst
 - files/session.bst
 - files/os-release.bst
-- (?):
-  - nvidia == true:
-    - base/nvidia.bst
+- files/secure-boot.bst
+- files/flatpak.bst
+- files/hardware.bst
+- session/ly.bst
+- security/selinux-policy.bst
+- base/nvidia.bst

@@ -11,7 +11,7 @@ freedesktop-sdk.bst (junction, x86-64-v3)
 ├── base/runtime.bst        systemd, dbus, CLI tools, firewalld
 ├── base/kernel-ogc.bst     OGC kernel + local config fragments
 ├── base/boot.bst           initramfs + systemd-boot + UKI
-├── base/nvidia.bst         NVIDIA flavor only (-o nvidia true)
+├── nvidia/                 NVIDIA driver stack, kargs, modprobe and device nodes
 ├── compositor/mango.bst    Mango, pinned source build
 ├── compositor/quickshell.bst  Quickshell v0.3.2 source build (binary only)
 ├── tooling/                WC tooling, brew, Docker, Voxtype, agent defaults
@@ -31,9 +31,11 @@ Flavors are BuildStream options, not separate branches:
 | Default | `-o nvidia false` | `:testing`, `:stable` |
 | NVIDIA | `-o nvidia true` | `:testing-nvidia`, `:stable-nvidia` |
 
-Both share the OGC kernel. `base/nvidia.bst` adds the driver modules and
-userspace libraries only when the option is enabled. The CI build matrix builds
-both flavors from the same commit.
+Both share the OGC kernel. `base/nvidia.bst` enables `elements/nvidia/` when the
+option is set: the driver userspace and open kernel modules are built from
+NVIDIA's pinned `.run` payload against that tree, with kargs, modprobe glue and
+device-node creation. `depmod` runs during OCI assembly. The CI build matrix
+builds both flavors from the same commit.
 
 ## Boot model
 
@@ -42,11 +44,15 @@ both flavors from the same commit.
 - `containers.bootc=1` label on the OCI image
 - `bootc container lint` gates every build
 
-## Why no GNOME junction
+## GNOME Build Meta junction
 
-The GNOME and Bluefin artifact caches are reused as **pull-only** caches in
-`project.conf`. They are built on FSDK, so their FSDK artifacts satisfy our
-junction without imposing GNOME Shell or GNOME OS on the image.
+The GNOME and Bluefin artifact caches are pull-only inputs in `project.conf`.
+The FSDK junction mirrors Dakota's `x86_64_v3` boolean conditional and
+component overrides, and a pinned `gnome-build-meta.bst` junction provides the
+SDK elements those overrides reference. This makes artifact keys match the
+published GNOME cache without installing GNOME Shell or GNOME OS in the image.
+The junction carries only GNOME Build Meta's SDK elements, not a desktop
+session.
 
 ## What is deliberately absent
 

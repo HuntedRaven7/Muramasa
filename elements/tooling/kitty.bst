@@ -8,9 +8,12 @@ build-depends:
 - freedesktop-sdk.bst:components/meson.bst
 - freedesktop-sdk.bst:components/freetype.bst
 - freedesktop-sdk.bst:components/harfbuzz.bst
-- freedesktop-sdk.bst:components/png.bst
+- freedesktop-sdk.bst:components/libpng.bst
 - freedesktop-sdk.bst:components/libxkbcommon.bst
 - freedesktop-sdk.bst:components/wayland.bst
+- freedesktop-sdk.bst:components/gcc.bst
+- freedesktop-sdk.bst:components/pkg-config.bst
+- freedesktop-sdk.bst:components/fontconfig.bst
 
 sources:
 - kind: git_repo
