@@ -14,6 +14,9 @@ sources:
   ref: '%{fsdk-ref}'
 - kind: patch_queue
   path: patches/freedesktop-sdk
+# Dakota's separate queue; required for its ghostscript/ffmpeg artifact keys.
+- kind: patch_queue
+  path: patches/freedesktop-sdk-dakota
 
 config:
   options:

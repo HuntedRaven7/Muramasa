@@ -51,7 +51,10 @@ ignored. Each push logs the source size, archive size and destination tag. The
 archive uses a relative path because `oras` rejects
 absolute paths. The FSDK junction mirrors Dakota's boolean `x86_64_v3`
 conditional so artifact keys match the upstream caches; passing a string
-variable would change every key and force a full rebuild.
+variable would change every key and force a full rebuild. Both FSDK patch
+queues from Dakota are applied for the same reason. Only the FSDK/GNOME Build
+Meta portion of the graph can hit Bluefin's cache; Muramasa's own compositor,
+tooling and shell elements are built locally and cached in GHCR.
 Plugin junctions are pinned to Dakota's versions (`buildstream-plugins` 2.8.0
 and `buildstream-plugins-community` 2.4.0) so GBM's plugin declarations resolve
 with matching keys. `cache-clean.yml` prunes old cache tags.
