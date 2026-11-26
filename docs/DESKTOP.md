@@ -65,6 +65,14 @@ left to the user or a future image-level default.
 `xdg-desktop-portal`, so screenshots and screen sharing work with Mango.
 GTK4 and libadwaita are also built from pinned sources for Nautilus.
 
+## Audio and baseline utilities
+
+The PipeWire **daemon** is installed alongside WirePlumber, so PulseAudio
+clients and Voxtype have a running audio service rather than only client
+libraries. `elements/tooling/core-utils.bst` guarantees the usual shell and
+system tools (`ps`, `ip`, `ping`, `nano`, `vim`, `rsync`, `tar`, `grep`, `sed`,
+`find`), plus fonts, icons, `libnotify`, `zenity` and `flatpak-xdg-utils`.
+
 ## Application store
 
 The Flatpark remote is installed system-wide from the signed

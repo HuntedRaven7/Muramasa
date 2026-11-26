@@ -9,6 +9,7 @@ depends:
 - compositor/mango.bst
 - compositor/quickshell.bst
 - tooling/wc-tools.bst
+- tooling/core-utils.bst
 - tooling/brew.bst
 - tooling/brew-tarball.bst
 - tooling/docker.bst
