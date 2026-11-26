@@ -11,6 +11,7 @@ in the same PR (see `AGENTS.md`). Keep this index current when adding a page.
 | `CACHE.md` | Upstream caches and the GHCR OCI cache |
 | `DESKTOP.md` | Mango session, shell layer, desktop tooling, gaming |
 | `RELEASING.md` | Streams, digest promotion, rollback |
+| `UPDATES.md` | Automated pin updates from upstream remotes |
 | `TESTING.md` | Shared testsuite and Mango smoke checks |
 | `BRANCH_PROTECTION.md` | PR-only policy and protected branches |
 | `SECURE_BOOT.md` | Dev keys, UKI signing, enrollment |
