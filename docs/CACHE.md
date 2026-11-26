@@ -32,7 +32,9 @@ step the CAS stays empty and every build starts from scratch.
 ## Key scheme
 
 `BST_CACHE_KEY` is derived from the graph definitions and is written only by a
-successful build. Incomplete builds publish two other tags:
+build that finishes inside the soft budget. Timed-out checkpoints count as
+incomplete, even though their build step exits 0. Incomplete builds publish two
+other tags:
 `BST_CACHE_FALLBACK_KEY`, an immutable snapshot named for the run and attempt,
 and `BST_CACHE_LATEST_KEY`, a rolling pointer to the newest snapshot. Pull
 tries the exact key, then the rolling pointer, then this run's snapshot, so a

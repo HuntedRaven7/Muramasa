@@ -237,9 +237,11 @@ jobs:
           # writing to the bind-mounted cache. Stop it before archiving.
           sudo podman ps -aq | xargs -r sudo podman rm -f >/dev/null 2>&1 || true
           sleep 2
-          if [ "${{ steps.build-image.outcome }}" != "success" ]; then
+          if [ "${{ steps.build-image.outcome }}" != "success" ] || \
+             [ "${{ steps.build-image.outputs.timeout }}" = "true" ]; then
             # Never advertise a partial build as complete, but keep its
-            # artifacts so the next attempt is not cold.
+            # artifacts so the next attempt is not cold. A timeout makes the
+            # build step exit 0, so check its output as well as its outcome.
             unset BST_CACHE_KEY
           fi
           just cache-push
