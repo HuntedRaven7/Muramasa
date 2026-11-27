@@ -1,4 +1,5 @@
 .build-out/
+.bst/
 build/
 sbom_out/
 *.raw
