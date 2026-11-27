@@ -13,6 +13,12 @@ needed. The image digest is set by `BST2_IMAGE` in the `Justfile`. The `bst`
 recipe marks restored git source directories as safe, since a seeded cache can
 contain files owned by another uid.
 
+`elements/core/sandbox-tools.bst` stages FSDK's `components/stripper.bst` for
+every `manual` element. Without it, FSDK's `strip-binaries` install command
+calls `freedesktop-sdk-stripper`, which is not in the sandbox, and the build
+fails with exit code 127. Elements that use a prebuilt SDK instead keep
+`strip-binaries: ""` because the stripper does not apply to them.
+
 ## Local build
 
 ```sh

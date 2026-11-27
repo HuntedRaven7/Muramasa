@@ -5,6 +5,7 @@ description: |
 
 depends:
 - freedesktop-sdk.bst:bootstrap/coreutils.bst
+- freedesktop-sdk.bst:components/stripper.bst
 - freedesktop-sdk.bst:components/findutils.bst
 - freedesktop-sdk.bst:components/sed.bst
 - freedesktop-sdk.bst:components/grep.bst
