@@ -22,7 +22,7 @@ will need that review.
 `testing` requires these status checks before merge:
 
 - `validate` (pin check + BuildStream graph)
-- `image (base)` and `image (nvidia)` (both GPU flavors)
+- `image (base, false)` and `image (nvidia, true, -nvidia)` (both GPU flavors)
 - `pre-commit`, `codeql`, `scorecard`
 
 `stable` has no required checks because CI does not run on that branch; it is

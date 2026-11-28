@@ -4,7 +4,8 @@ description: |
   element so every static-file layer can depend on it.
 
 depends:
-- freedesktop-sdk.bst:components/coreutils.bst
+- freedesktop-sdk.bst:bootstrap/coreutils.bst
+- freedesktop-sdk.bst:components/stripper.bst
 - freedesktop-sdk.bst:components/findutils.bst
 - freedesktop-sdk.bst:components/sed.bst
 - freedesktop-sdk.bst:components/grep.bst

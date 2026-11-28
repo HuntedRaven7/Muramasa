@@ -1,10 +1,11 @@
 kind: stack
 description: |
-  NVIDIA flavor only. The driver modules are built against the OGC kernel by
-  the FSDK element; this layer adds the userspace libraries and the runtime
-  tweaks needed by Mango and gamescope.
+  NVIDIA flavor only. The driver stack is not available as an FSDK element in
+  26.08; when that junction is added, its elements belong here. For now the
+  flavor contributes only its runtime configuration.
 
-depends:
-- freedesktop-sdk.bst:components/nvidia-drivers.bst
-- freedesktop-sdk.bst:components/nvidia-utils.bst
-- files/nvidia.bst
+(?):
+- nvidia == true:
+    depends:
+    - files/nvidia.bst
+    - nvidia/stack.bst

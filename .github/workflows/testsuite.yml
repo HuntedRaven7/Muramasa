@@ -1,0 +1,66 @@
+name: testsuite
+
+# End-to-end testing. The upstream shared suite contributes the portable
+# `common` checks (SSH health, portals, polkit, immutability, Flatpak); the
+# Mango-specific smoke checks live in this repo because the upstream GUI
+# suites assume GNOME Shell, which Muramasa intentionally does not ship.
+#
+# This is a post-merge promotion gate, not a PR check. See docs/TESTING.md.
+
+on:
+  workflow_run:
+    workflows: [build]
+    types: [completed]
+    branches: [testing]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image reference to test'
+        type: string
+        default: 'ghcr.io/huntedraven7/muramasa:testing'
+
+permissions: {}
+
+jobs:
+  upstream-common:
+    name: Shared common suite
+    permissions:
+      contents: read
+      packages: write
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    uses: projectbluefin/testsuite/.github/workflows/e2e.yml@525c6b074ead63e50f0d90b54218d2c344454a5d # v1
+    with:
+      image: ${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
+      suites: common
+      test_ref: v1
+      # Muramasa ships a monolithic targeted refpolicy and boots enforcing.
+      selinux_enforcing: true
+    secrets: inherit
+
+  muramasa-smoke:
+    name: Mango desktop smoke
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: testing
+      - name: Log in to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
+            -u "${{ github.actor }}" --password-stdin
+      - name: Pull image
+        run: sudo podman pull "${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}"
+      - name: Run Mango smoke checks
+        env:
+          IMAGE: ${{ github.event.inputs.image || 'ghcr.io/huntedraven7/muramasa:testing' }}
+        run: testsuite/smoke.sh

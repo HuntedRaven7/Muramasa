@@ -1,0 +1,11 @@
+[Unit]
+Description=Create XDG user directories at first login
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/xdg-user-dirs-update
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target

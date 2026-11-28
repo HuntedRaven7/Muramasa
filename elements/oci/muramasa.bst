@@ -5,12 +5,17 @@ description: |
   installs it to the ESP automatically.
 
 build-depends:
-- base/sandbox-tools.bst
+- core/sandbox-tools.bst
 - freedesktop-sdk.bst:components/oci-builder.bst
 - freedesktop-sdk.bst:components/libcap.bst
+- freedesktop-sdk.bst:components/kmod.bst
+- freedesktop-sdk.bst:components/sbsigntools-maybe.bst
 - filename: oci/rootfs.bst
   config:
     location: /rootfs
+- filename: files/boot-keys.bst
+  config:
+    location: /keys
 
 variables:
   strip-binaries: ''
@@ -20,6 +25,22 @@ config:
   commands:
   - |
     set -eu
+    # Sign the UKI when a key and option are available. The public cert is
+    # always shipped so users can enroll it with `ujust enroll-secure-boot-key`.
+    if [ -f /keys/private/secure-boot.key ]; then
+      sbsign --key /keys/private/secure-boot.key \
+        --cert /keys/public/secure-boot.crt \
+        --output /tmp/muramasa.efi.signed \
+        /rootfs/boot/EFI/Linux/muramasa.efi
+      cp /tmp/muramasa.efi.signed /rootfs/boot/EFI/Linux/muramasa.efi
+    fi
+    # Rebuild module dependency maps after the NVIDIA flavor adds modules.
+    if [ -d /rootfs/usr/lib/modules ]; then
+      for moddir in /rootfs/usr/lib/modules/*; do
+        [ -d "$moddir" ] || continue
+        depmod -b /rootfs "$(basename "$moddir")"
+      done
+    fi
     cd "%{install-root}"
     build-oci <<'EOF'
     mode: oci

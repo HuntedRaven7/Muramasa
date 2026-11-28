@@ -14,6 +14,9 @@ aliases:
   pypi: https://files.pythonhosted.org/packages/
   ghcr: https://ghcr.io/
   crates: https://static.crates.io/
+  ziglang: https://ziglang.org/download/
+  nvidia: https://us.download.nvidia.com/
+  gnome_downloads: https://download.gnome.org/sources/
   flathub: https://flathub.org/repo/
   steam_static: https://cdn.fastly.steamstatic.com/
   # Versioned apt pool path is stable; the CDN's unversioned steam.deb is not.

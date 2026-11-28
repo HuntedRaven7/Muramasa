@@ -11,6 +11,11 @@ shell configuration files to this repository**.
   recipes named `elements/compositor/quickshell.bst` are the only exception.
 - Every third-party artifact is pinned in `include/versions.yml`. Use
   `just track`, review the diff, then open a PR. No mutable refs in elements.
+- **Every change that affects the image, CI, tests, or developer workflow must
+  update the relevant documentation in the same PR.** No exceptions: if a
+  component is added, removed, or reconfigured, update `docs/`, `README.md`,
+  `AGENTS.md`, and `testsuite/README.md` as applicable. A PR that changes
+  behaviour without changing docs is incomplete.
 - Both GPU flavors are built from this one tree: `nvidia=false` (default) and
   `nvidia=true`. Never fork the element graph for a flavor.
 - `testing` is the primary/default branch. `stable` is the promotion branch: a
@@ -30,6 +35,7 @@ shell configuration files to this repository**.
 | `include/` | Aliases, pins and flavor variables included by `project.conf` |
 | `scripts/` | Cache transport, pin checks, image diff helpers |
 | `tests/` | Content assertions run in CI |
+| `testsuite/` | Shared E2E wrapper and Mango-specific smoke checks |
 | `.agents/skills/` | Task-specific guidance for coding agents |
 | `.github/workflows/` | Build, quality, cache cleanup, release automation |
 | `.github/branch-protection/` | Branch protection API payloads for `testing` and `stable` |
@@ -64,7 +70,8 @@ branch protection, so work from a topic branch and open the PR against
 
 - Use Conventional Commits titles (`feat:`, `fix:`, `chore:`, `docs:`).
 - Run `just validate` and `just test` before pushing.
-- Required checks: `validate`, `image (base)`, `image (nvidia)`, `pre-commit`,
+- Required checks: `validate`, `image (base, false)`,
+  `image (nvidia, true, -nvidia)`, `pre-commit`,
   `codeql`, `scorecard`.
 - Squash merges only; linear history is required.
 - Update `include/versions.yml` and `docs/` together when a pin changes.

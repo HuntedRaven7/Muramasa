@@ -12,19 +12,57 @@ The upstream caches are FSDK-based, so they contain reusable artifacts for our
 junction even though Muramasa does not ship GNOME Shell. They are configured in
 `project.conf` under both `artifacts` and `source-caches`.
 
+Pulling from these caches means trusting two third parties to have built the
+artifacts from exactly the pinned sources. BuildStream verifies artifact keys
+against the local element and source definitions, so a mismatched or tampered
+artifact is rejected rather than used. We still depend on GNOME and Bluefin
+being available and honest about their cache contents; the pin set in
+`include/versions.yml` is what anchors that trust.
+
 ## Why the Muramasa cache is in GHCR
 
 GitHub Actions cache has a 10 GB per-repository cap. A full FSDK cache is much
 larger and gets evicted, which makes every CI run cold. GHCR artifacts are free
 and uncapped for public projects, so `scripts/bst-cache-oci.sh` moves the cache
-directory as an OCI artifact.
+directory as an OCI artifact. `oras` writes pushed layers as named files and
+does not unpack tar layers, so the pull path explicitly unpacks the
+`buildstream-cache.tar.zst` artifact into the cache directory. Without that
+step the CAS stays empty and every build starts from scratch.
 
 ## Key scheme
 
-`BST_CACHE_KEY` is derived from `project.conf`, `include/versions.yml`, and
-`elements/freedesktop-sdk.bst`. A build writes the key only when it succeeds;
-a failed build clears the key so a partial cache is never advertised as
-complete. `cache-clean.yml` prunes old cache tags.
+`BST_CACHE_KEY` is derived from the graph definitions and is written only by a
+build that finishes inside the soft budget. Timed-out checkpoints count as
+incomplete, even though their build step exits 0. Incomplete builds publish two
+other tags:
+`BST_CACHE_FALLBACK_KEY`, an immutable snapshot named for the run and attempt,
+and `BST_CACHE_LATEST_KEY`, a rolling pointer to the newest snapshot. Pull
+tries the exact key, then the rolling pointer, then this run's snapshot, so a
+long build converges across attempts without a partial cache ever claiming to
+be complete.
+
+The build has a 270-minute soft budget inside the 360-minute job limit. A
+`timeout` exit of 124 is treated as a checkpoint: the normal cache-save step
+still runs, and image export/signing steps are skipped for that attempt. The
+build uses `--on-error quit`. There is no mid-build archive: writing a large
+tar while GCC fills the CAS exhausted runner disk. Sources are kept in a
+separate GitHub Actions cache and excluded from the GHCR CAS archive.
+
+Before archiving, CI stops any leftover `bst2` container and checks that at
+least 1 GiB of disk is free. The archive excludes volatile scratch state
+(`sources/*`, `casserver-*.sock`, `cas/tmp/*`, `cas/staging/*` and `tmp/*`),
+which is recreated on restore. Transient files that disappear mid-read are
+ignored. Each push logs the source size, archive size and destination tag. The
+archive uses a relative path because `oras` rejects
+absolute paths. The FSDK junction mirrors Dakota's boolean `x86_64_v3`
+conditional so artifact keys match the upstream caches; passing a string
+variable would change every key and force a full rebuild. Both FSDK patch
+queues from Dakota are applied for the same reason. Only the FSDK/GNOME Build
+Meta portion of the graph can hit Bluefin's cache; Muramasa's own compositor,
+tooling and shell elements are built locally and cached in GHCR.
+Plugin junctions are pinned to Dakota's versions (`buildstream-plugins` 2.8.0
+and `buildstream-plugins-community` 2.4.0) so GBM's plugin declarations resolve
+with matching keys. `cache-clean.yml` prunes old cache tags.
 
 ## Local use
 

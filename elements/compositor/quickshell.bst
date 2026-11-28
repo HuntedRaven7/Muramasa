@@ -10,12 +10,12 @@ description: |
 
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
-- freedesktop-sdk.bst:components/qt6-base.bst
-- freedesktop-sdk.bst:components/qt6-declarative.bst
-- freedesktop-sdk.bst:components/qt6-svg.bst
-- freedesktop-sdk.bst:components/qt6-tools.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/pipewire.bst
+- compositor/qt6-base.bst
+- compositor/qt6-declarative.bst
+- compositor/qt6-svg.bst
+- compositor/qt6-wayland.bst
 
 sources:
 - kind: git_repo

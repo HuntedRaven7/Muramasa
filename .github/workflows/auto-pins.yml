@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   track:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       pull-requests: write
@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: testing
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2
         with:
           tool: just
       - name: Re-track sources
@@ -28,7 +28,7 @@ jobs:
             registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:64eb0b4930d57a92710822898fb73af6cc1ae35d \
             bash -lc 'for e in elements/freedesktop-sdk.bst elements/plugins/*.bst elements/compositor/*.bst elements/gaming/gamescope.bst elements/tooling/brew.bst; do bst -o arch x86_64 source track "$e"; done'
       - name: Open PR if pins changed
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: testing

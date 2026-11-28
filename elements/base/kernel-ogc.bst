@@ -19,7 +19,6 @@ build-depends:
 
 variables:
   strip-binaries: ''
-  ogc-localversion: '%{ogc-localversion}'
   kernel-arch: '%{arch}'
   (?):
   - arch == "aarch64":
