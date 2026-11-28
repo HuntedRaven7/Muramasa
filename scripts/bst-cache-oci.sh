@@ -21,9 +21,22 @@ ACTION="${1:-}"
 restore_cache() {
   local key="$1"
   local archive_path="${CACHE_DIR}/${CACHE_ARCHIVE}"
+  local attempt downloaded
 
-  echo "Pulling ${BST_CACHE_REF}:${key}"
-  if ! oras pull "${BST_CACHE_REF}:${key}" --output "$CACHE_DIR" 2>/dev/null; then
+  # A ~28 GB download occasionally stalls and is cut off after ~10 minutes.
+  # Retry a few times before giving up on the key; keep stderr visible so the
+  # failure is diagnosable in CI logs instead of looking like a missing tag.
+  downloaded=0
+  for attempt in 1 2 3; do
+    rm -f "$archive_path"
+    echo "Pulling ${BST_CACHE_REF}:${key} (attempt ${attempt})"
+    if oras pull "${BST_CACHE_REF}:${key}" --output "$CACHE_DIR"; then
+      downloaded=1
+      break
+    fi
+    echo "Pull of ${key} failed on attempt ${attempt}" >&2
+  done
+  if [ "$downloaded" -eq 0 ]; then
     echo "No cache for key ${key}; trying next" >&2
     return 1
   fi
